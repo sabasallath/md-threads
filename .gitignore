@@ -1,0 +1,41 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependency directories
+node_modules/
+/.pnp
+.pnp.js
+
+# Optional npm cache directory
+.npm
+# Optional eslint cache
+.eslintcache
+.scannerwork/
+
+# Distribution directories
+dist/
+
+# testing
+**/__snapshots__/
+coverage/
+junit.xml
+
+# production
+build/
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.idea/
+.vscode/
