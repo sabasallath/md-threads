@@ -14,6 +14,7 @@ import {
   Settings,
   NotListedLocation,
   Widgets,
+  Edit,
 } from '@material-ui/icons';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -111,6 +112,7 @@ function NavigationDrawer(props: IProps) {
   const navigationItems = [
     { name: 'Home', icon: <Home />, to: '/' },
     { name: 'Demo', icon: <Widgets />, to: '/demo' },
+    { name: 'Markdown Editor', icon: <Edit />, to: '/md-editor' },
     { name: '404 Page', icon: <NotListedLocation />, to: '/404' },
   ];
 
