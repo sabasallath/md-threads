@@ -12,5 +12,7 @@
   "Send": "Send",
   "Edit":  "Edit",
   "Preview": "Preview",
-  "Topic": "Topic"
+  "Topic": "Topic",
+  "Reply": "Reply",
+  "private": "private"
 }

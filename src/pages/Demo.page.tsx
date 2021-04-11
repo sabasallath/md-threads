@@ -3,7 +3,7 @@ import { createStyles, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from '@material-ui/core';
 import DialogBase from '../components/common/helpers/DialogBase';
-import { RandomContent } from '../utils/randomContent';
+import { RandomUtil } from '../utils/random.util';
 import { useDialogBaseContext } from '../store/contexts/DialogBase.context';
 import RightDrawer from '../components/common/NavigationDrawer/RightDrawer';
 
@@ -66,7 +66,7 @@ function DemoPage(props: IProps) {
 
   const genParagraph = (p: number) => (
     <>
-      {RandomContent.lorem(p).map((e, index) => (
+      {RandomUtil.lorem(p).map((e, index) => (
         <Grid item key={index}>
           {e}
         </Grid>
