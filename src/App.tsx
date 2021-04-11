@@ -14,6 +14,7 @@ import RightAppBar from './components/common/appBars/RightAppBar/RightAppBar';
 import DemoPage from './pages/Demo.page';
 import SearchBar from './components/common/appBars/RightAppBar/SearchBar';
 import MarkdownEditorPage from './pages/MarkdownEditor.page';
+import TopicPage from './pages/Topic.page';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -73,6 +74,7 @@ function App(props: IProps) {
             <Route exact path="/" component={HomePage} />
             <Route exact path="/demo" component={DemoPage} />
             <Route exact path="/md-editor" component={MarkdownEditorPage} />
+            <Route exact path="/topic" component={TopicPage} />
             <Route component={NotFoundPage} />
           </Switch>
         </main>
