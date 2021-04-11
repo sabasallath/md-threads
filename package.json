@@ -10,7 +10,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "isready": "npm run format && npm run lint && npm run test:ci && npm run build"
+    "isready": "npm run format && npm run lint && npm run build"
   },
   "dependencies": {
     "@fontsource/roboto": "^4.2.2",
