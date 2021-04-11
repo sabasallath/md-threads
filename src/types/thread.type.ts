@@ -1,16 +1,13 @@
-export interface ThreadRootNodeType {
+export interface ThreadNodeType {
   id: string;
   title: string;
-  descendant: ThreadNodeType[];
-  author: string;
-}
-
-export interface ThreadNodeType extends ThreadRootNodeType {
   date: string;
-  isPublic: boolean;
+  author: string;
   markdown: string;
+  isPublic: boolean;
+  descendant: ThreadNodeType[];
 }
 
 export interface ThreadType {
-  root: ThreadRootNodeType;
+  root: ThreadNodeType;
 }

@@ -73,6 +73,7 @@ const styles = (theme: Theme) => {
     cardActions: {
       display: 'flex',
       justifyContent: 'flex-end',
+      marginTop: theme.spacing(1),
     },
   });
 };
@@ -145,7 +146,7 @@ function MarkdownEditor(props: IProps) {
 
   return (
     <div className={classes.root}>
-      <Card>
+      <Card elevation={0}>
         <Grid container alignItems={'stretch'}>
           <Grid item xs={6}>
             <AppBar

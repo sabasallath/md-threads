@@ -1,6 +1,6 @@
 import range from 'lodash/range';
 import chance from '../config/chance';
-import { ThreadNodeType, ThreadRootNodeType, ThreadType } from '../types/thread.type';
+import { ThreadNodeType, ThreadType } from '../types/thread.type';
 import { v4 as uuidv4 } from 'uuid';
 
 export class RandomUtil {
@@ -32,11 +32,14 @@ export class RandomUtil {
       : [];
   }
 
-  private static genThreadNodeRootFactorial(n: number): ThreadRootNodeType {
+  private static genThreadNodeRootFactorial(n: number): ThreadNodeType {
     return {
       id: uuidv4(),
       title: chance.company(),
       author: chance.name(),
+      date: chance.date().toISOString(),
+      isPublic: chance.bool(),
+      markdown: this.genMarkdown(),
       descendant: n > 0 ? this.genThreadNodeFactorial(n) : [],
     };
   }
@@ -73,11 +76,14 @@ export class RandomUtil {
     minDescendant: number,
     maxDescendant: number,
     convergeFaster: boolean
-  ): ThreadRootNodeType {
+  ): ThreadNodeType {
     return {
       id: uuidv4(),
       title: chance.company(),
       author: chance.name(),
+      date: chance.date().toISOString(),
+      isPublic: chance.bool(),
+      markdown: this.genMarkdown(),
       descendant:
         maxLevel > 0
           ? this.genThreadNode(maxLevel, minDescendant, maxDescendant, convergeFaster)
