@@ -25,9 +25,6 @@ function Topic({ thread }: IProps) {
   return (
     <div>
       <MarkdownNode level={0} {...thread.root} handleOnReplyClick={handleOnReplyClick} />
-      {thread.root.descendant.map((e) => (
-        <MarkdownNode handleOnReplyClick={handleOnReplyClick} key={e.id} {...e} level={1} />
-      ))}
       <DialogBase fullWidth open={open} handleClose={handleClose} handleOpen={handleOpen}>
         <ReplyDialog node={node} />
       </DialogBase>

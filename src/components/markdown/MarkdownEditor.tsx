@@ -61,9 +61,10 @@ const styles = (theme: Theme) => {
     textArea: {
       width: '100%',
       height: '100%',
-      resize: 'vertical',
+      resize: 'none',
       borderColor: fadedColor,
       color: 'black',
+      display: 'flex',
     },
     previewArea: {
       wordBreak: 'break-all',
