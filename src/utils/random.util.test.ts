@@ -12,10 +12,7 @@ test('Thread generation test -- root node', () => {
 
 test('Thread generation test -- number of nodes of a regular tree', () => {
   const expectedNbNodeRegular = (n: number) => {
-    if (n === 1) return 1;
-    if (n === 2) return 3;
-    // Only true with n > 2
-    return Math.floor(Math.pow(n, n) / (n - 1));
+    return TreeUtil.nbNodesInRegularTree(n, n);
   };
 
   expect(TreeUtil.nbNodes(RandomUtil.genThreadRegular(0).root)).toBe(1);

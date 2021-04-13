@@ -68,6 +68,7 @@ function App(props: IProps) {
           <Switch>
             <Route exact path="/" component={() => <RightAppBar center>Welcome</RightAppBar>} />
             <Route exact path="/demo" component={() => <SearchBar />} />
+            <Route exact path="/topic" component={() => <SearchBar />} />
             <Route component={RightAppBar} />
           </Switch>
           <Switch>
