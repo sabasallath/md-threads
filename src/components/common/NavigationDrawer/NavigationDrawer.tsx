@@ -115,6 +115,7 @@ function NavigationDrawer(props: IProps) {
     { name: 'Demo', icon: <Widgets />, to: '/demo' },
     { name: 'Markdown Editor', icon: <Edit />, to: '/md-editor' },
     { name: 'Topic', icon: <Chat />, to: '/topic' },
+    { name: 'Topics', icon: <Chat />, to: '/topics' },
     { name: '404 Page', icon: <NotListedLocation />, to: '/404' },
   ];
 

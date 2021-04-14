@@ -17,11 +17,11 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Typography from '@material-ui/core/Typography';
 import { useTranslation } from 'react-i18next';
 import SmsIcon from '@material-ui/icons/Sms';
-import RoomIcon from '@material-ui/icons/Room';
+import SubjectIcon from '@material-ui/icons/Subject';
+import { useTopicContext } from '../../store/contexts/Topic.context';
 
 interface ThreadNodeTypeWithLevel extends ThreadNodeType {
   level: number;
-  handleOnReplyClick: (node: ThreadNodeType) => void;
 }
 type IProps = ThreadNodeTypeWithLevel;
 
@@ -41,8 +41,9 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
 
 const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
   const classes = useStyles(props);
-  const { title, descendant, date, isPublic, markdown, level, author, handleOnReplyClick } = props;
+  const { title, descendant, date, isPublic, markdown, level, author, isAbstract } = props;
   const { t, ready } = useTranslation();
+  const { handleOnReplyClick, handleOnOpenTopicClick } = useTopicContext();
   const getTranslation = (k: string) => (ready ? t(k) : k);
 
   const formatAvatar = (author: string) => author.split(' ').map((e) => (e?.[0] ? e[0] : ''));
@@ -53,23 +54,31 @@ const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
     return !isPublic ? `(${getTranslation('private')}) ${formattedTitle}` : formattedTitle;
   }
 
+  function handleOnClick() {
+    return !isAbstract ? handleOnReplyClick({ ...props }) : handleOnOpenTopicClick({ ...props });
+  }
+
+  function getToolTip() {
+    return !isAbstract ? getTranslation('Reply') : `${getTranslation('Open')}`;
+  }
+
   return (
     <Box p={1}>
-      <Card className={classes.root} elevation={level}>
+      <Card className={classes.root} elevation={!isAbstract ? level : 1}>
         <CardHeader
           avatar={
             <Avatar aria-label="avatar" className={classes.avatar}>
-              {!level ? <RoomIcon /> : formatAvatar(author)}
+              {!level ? <SubjectIcon /> : formatAvatar(author)}
             </Avatar>
           }
           action={
-            <Tooltip title={getTranslation('Reply')}>
+            <Tooltip title={getToolTip()}>
               <IconButton
                 color={!level ? 'secondary' : undefined}
-                onClick={() => handleOnReplyClick({ ...props })}
+                onClick={handleOnClick}
                 aria-label="reply"
               >
-                <SmsIcon />
+                {!isAbstract ? <SmsIcon /> : <SubjectIcon />}
               </IconButton>
             </Tooltip>
           }
@@ -85,14 +94,7 @@ const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
           <ReactMarkdown>{markdown}</ReactMarkdown>
         </CardContent>
         {descendant.map((e) => {
-          return (
-            <MarkdownNode
-              handleOnReplyClick={handleOnReplyClick}
-              level={level + 1}
-              key={e.id}
-              {...e}
-            />
-          );
+          return <MarkdownNode level={level + 1} key={e.id} {...e} />;
         })}
       </Card>
     </Box>

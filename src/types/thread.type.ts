@@ -7,6 +7,7 @@ export interface ThreadNodeBase {
   author: string;
   markdown: string;
   isPublic: boolean;
+  isAbstract: boolean;
 }
 
 export interface ThreadNodeType extends ThreadNodeBase, TreeNode<ThreadNodeType> {

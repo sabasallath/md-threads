@@ -15,6 +15,8 @@ import DemoPage from './pages/Demo.page';
 import SearchBar from './components/common/appBars/RightAppBar/SearchBar';
 import MarkdownEditorPage from './pages/MarkdownEditor.page';
 import TopicPage from './pages/Topic.page';
+import TopicsPage from './pages/Topics.page';
+import ScrollIntoView from './components/common/helpers/ScrollIntoView';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -57,28 +59,32 @@ function App(props: IProps) {
   return (
     <div className={classes.root}>
       <Router basename={href()}>
-        <NavigationDrawer />
-        <main
-          className={clsx(classes.content, {
-            [classes.expandedNavigationDrawer]: expandedNavigationDrawer,
-            [classes.reducedNavigationDrawer]: !expandedNavigationDrawer,
-            [classes.contentShift]: openedNavigationDrawer,
-          })}
-        >
-          <Switch>
-            <Route exact path="/" component={() => <RightAppBar center>Welcome</RightAppBar>} />
-            <Route exact path="/demo" component={() => <SearchBar />} />
-            <Route exact path="/topic" component={() => <SearchBar />} />
-            <Route component={RightAppBar} />
-          </Switch>
-          <Switch>
-            <Route exact path="/" component={HomePage} />
-            <Route exact path="/demo" component={DemoPage} />
-            <Route exact path="/md-editor" component={MarkdownEditorPage} />
-            <Route exact path="/topic" component={TopicPage} />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </main>
+        <ScrollIntoView>
+          <NavigationDrawer />
+          <main
+            className={clsx(classes.content, {
+              [classes.expandedNavigationDrawer]: expandedNavigationDrawer,
+              [classes.reducedNavigationDrawer]: !expandedNavigationDrawer,
+              [classes.contentShift]: openedNavigationDrawer,
+            })}
+          >
+            <Switch>
+              <Route exact path="/" component={() => <RightAppBar center>Welcome</RightAppBar>} />
+              <Route exact path="/demo" component={() => <SearchBar />} />
+              <Route exact path="/topic" component={() => <SearchBar />} />
+              <Route path="/topics" component={() => <SearchBar />} />
+              <Route component={RightAppBar} />
+            </Switch>
+            <Switch>
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/demo" component={DemoPage} />
+              <Route exact path="/md-editor" component={MarkdownEditorPage} />
+              <Route exact path="/topic" component={TopicPage} />
+              <Route path="/topics" component={TopicsPage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </main>
+        </ScrollIntoView>
       </Router>
     </div>
   );

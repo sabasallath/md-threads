@@ -22,6 +22,7 @@ export class ThreadUtil {
       id: '',
       date: '',
       markdown: '',
+      isAbstract: false,
     };
   }
 

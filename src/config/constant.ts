@@ -1,4 +1,7 @@
 export default class Constant {
+  // MUI Constant
+  static readonly APP_BAR_MUI_SM_BREAKPOINT_HEIGHT = 64;
+
   // UI Constant
   static readonly NAVIGATION_DRAWER_START_OPEN = true;
   static readonly NAVIGATION_DRAWER_START_EXPANDED = true;
