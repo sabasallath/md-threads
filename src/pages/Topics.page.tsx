@@ -6,7 +6,6 @@ import Topic from '../components/Topic/Topic';
 import RightDrawer from '../components/common/NavigationDrawer/RightDrawer';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store/store';
-import { RandomUtil } from '../utils/random.util';
 import { ThreadNodeType } from '../types/thread.type';
 import { threadActions } from '../store/features/thread/thread.slice';
 import BreadcrumbsContainer from '../components/common/appBars/BreadCrumbsContainer/BreadcrumbsContainer';
@@ -14,6 +13,8 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import Constant from '../config/constant';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { useThread, useThreads } from '../api/Api';
+import LoadingScreen from '../components/common/screen/LoadingScreen';
 
 interface HideOnScrollProps {
   children: React.ReactElement;
@@ -52,22 +53,28 @@ const styles = (theme: Theme) =>
     },
   });
 
+function onAbstractPage(pathname: string) {
+  return pathname.length === '/topics'.length;
+}
+
 function TopicsPage(props: IProps) {
-  const { classes, threads, currentThread, setOpenThread, searchBar } = props;
+  const { classes, currentThread, setOpenThread, searchBar } = props;
   const { t, ready } = useTranslation();
   const getTranslation = (k: string) => (ready ? t(k) : k);
   const rootPath = getTranslation('Topics');
+
   const match = useRouteMatch();
   const history = useHistory();
+  const isOnAbstractPage = onAbstractPage(history.location.pathname);
+  const threads = useThreads(isOnAbstractPage);
+  const thread = useThread(currentThread, !isOnAbstractPage);
 
   const breadCrumbDisplayPath =
-    !currentThread || history.location.pathname.length === '/topics'.length
+    !currentThread || isOnAbstractPage || !thread.data
       ? [rootPath]
-      : [rootPath, currentThread.root.title];
+      : [rootPath, thread.data.root.title];
 
-  const refreshOnSubTopicPage =
-    (currentThread === null || currentThread === undefined) &&
-    history.location.pathname.length !== '/topics'.length;
+  const refreshOnSubTopicPage = !threads.data && !isOnAbstractPage;
 
   useEffect(() => {
     if (refreshOnSubTopicPage) {
@@ -101,22 +108,28 @@ function TopicsPage(props: IProps) {
         </div>
         <Switch>
           <Route path={`${match.path}/:id`}>
-            {currentThread ? (
+            {thread.isLoading || !thread.data ? (
+              <LoadingScreen />
+            ) : (
               <Topic
                 handleOnOpenTopicClick={handleOnOpenTopicClick}
-                key={currentThread.root.id}
-                thread={currentThread}
+                key={thread.data.root.id}
+                thread={thread.data}
               />
-            ) : undefined}
+            )}
           </Route>
           <Route path={match.path}>
-            {RandomUtil.buildAbstract(threads).map((thread) => (
-              <Topic
-                handleOnOpenTopicClick={handleOnOpenTopicClick}
-                key={thread.root.id}
-                thread={thread}
-              />
-            ))}
+            {threads.isLoading || !threads.data ? (
+              <LoadingScreen />
+            ) : (
+              threads.data.map((thread) => (
+                <Topic
+                  handleOnOpenTopicClick={handleOnOpenTopicClick}
+                  key={thread.root.id}
+                  thread={thread}
+                />
+              ))
+            )}
           </Route>
         </Switch>
       </Box>
@@ -126,7 +139,6 @@ function TopicsPage(props: IProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  threads: state.thread.threads,
   searchBar: state.ui.searchBar,
   currentThread: state.thread.currentThread,
 });

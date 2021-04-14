@@ -20,4 +20,7 @@ export default class Constant {
   static readonly MARKDOWN_EDITOR_MIN_HEIGHT = 300;
   static readonly MARKDOWN_EDITOR_FADE_ANIMATION_DURATION = 375;
   static readonly MARKDOWN_EDITOR_AUDIT_TIME = 150;
+
+  // Mock
+  static readonly MOCK_API_DELAY_RESPONSE = 600;
 }
