@@ -11,5 +11,12 @@
   "Cancel":  "Cancel",
   "Send": "Send",
   "Edit":  "Edit",
-  "Preview": "Preview"
+  "Preview": "Preview",
+  "Topic": "Topic",
+  "Topics": "Topics",
+  "Reply": "Reply",
+  "private": "private",
+  "Reply to": "Reply to",
+  "Previous message": "Previous message",
+  "Open": "Open"
 }

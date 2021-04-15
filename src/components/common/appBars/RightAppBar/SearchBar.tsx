@@ -8,6 +8,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import { connect, ConnectedProps } from 'react-redux';
 import clsx from 'clsx';
 import { RootState } from '../../../../store/store';
+import Constant from '../../../../config/constant';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -40,7 +41,7 @@ const styles = (theme: Theme) =>
     searchRoot: {
       height: theme.mixins.toolbar.minHeight,
       [theme.breakpoints.up('sm')]: {
-        top: 64,
+        top: Constant.APP_BAR_MUI_SM_BREAKPOINT_HEIGHT,
       },
       padding: '2px 4px',
       display: 'flex',

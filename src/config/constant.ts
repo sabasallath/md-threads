@@ -1,4 +1,7 @@
 export default class Constant {
+  // MUI Constant
+  static readonly APP_BAR_MUI_SM_BREAKPOINT_HEIGHT = 64;
+
   // UI Constant
   static readonly NAVIGATION_DRAWER_START_OPEN = true;
   static readonly NAVIGATION_DRAWER_START_EXPANDED = true;
@@ -13,8 +16,11 @@ export default class Constant {
   static readonly LOCAL_CODES = ['gb', 'fr'];
 
   // Markdown Editor
-  static readonly MARKDOWN_EDITOR_MAX_HEIGHT = 500;
+  static readonly MARKDOWN_EDITOR_MAX_HEIGHT = 450;
   static readonly MARKDOWN_EDITOR_MIN_HEIGHT = 300;
   static readonly MARKDOWN_EDITOR_FADE_ANIMATION_DURATION = 375;
   static readonly MARKDOWN_EDITOR_AUDIT_TIME = 150;
+
+  // Mock
+  static readonly MOCK_API_DELAY_RESPONSE = 300;
 }

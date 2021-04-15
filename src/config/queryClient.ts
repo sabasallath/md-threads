@@ -3,10 +3,10 @@ import { QueryClient } from 'react-query';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity,
-      cacheTime: 1000 * 60 * 10, // 10 minutes
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
+      staleTime: 1000 * 5, // 5 seconds
+      cacheTime: 1000 * 60,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
     },
   },
 });

@@ -3,6 +3,7 @@ import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import clsx from 'clsx';
 import { useMediaQuery } from '@material-ui/core';
+import Constant from '../../../config/constant';
 
 interface IProps extends WithStyles<typeof styles> {
   children?: React.ReactChild | React.ReactChild[];
@@ -16,7 +17,7 @@ const styles = (theme: Theme) =>
     root: {
       height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
       [theme.breakpoints.up('sm')]: {
-        height: `calc(100vh - 64px)`,
+        height: `calc(100vh - ${Constant.APP_BAR_MUI_SM_BREAKPOINT_HEIGHT}px)`,
       },
     },
     center: {
@@ -29,7 +30,7 @@ const styles = (theme: Theme) =>
     adjustCenterWithAppBar: {
       transform: 'translateY(calc( -' + theme.mixins.toolbar.minHeight + 'px / 2))',
       [theme.breakpoints.up('sm')]: {
-        transform: 'translateY(calc( -64px / 2))',
+        transform: `translateY(calc( -${Constant.APP_BAR_MUI_SM_BREAKPOINT_HEIGHT}px / 2))`,
       },
     },
     scaleContentWithheightMedium: {
