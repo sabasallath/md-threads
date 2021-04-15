@@ -61,7 +61,12 @@ function TopicsPage(props: IProps) {
   const history = useHistory();
   const { data, isLoading } = useThreads(currentThread);
   const [loadingNode, setLoadingNode] = useState<ThreadNodeType | undefined>(undefined);
-  const breadCrumbDisplayPath = !currentThread || !data ? [rootPath] : [rootPath, data.root.title];
+  const breadCrumbDisplayPath =
+    !currentThread || !data
+      ? loadingNode
+        ? [rootPath, loadingNode.title]
+        : [rootPath]
+      : [rootPath, data.root.title];
   const isOnAbstractView = data?.root.isAbstract && history.location.pathname !== '/topics';
 
   useEffect(() => {
