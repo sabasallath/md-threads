@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Box, Slide, useScrollTrigger } from '@material-ui/core';
@@ -12,8 +12,8 @@ import BreadcrumbsContainer from '../components/common/appBars/BreadCrumbsContai
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import Constant from '../config/constant';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
-import { useThread, useThreads } from '../api/Api';
+import { useHistory } from 'react-router-dom';
+import { useThreads } from '../api/Api';
 import LoadingScreen from '../components/common/screen/LoadingScreen';
 
 interface HideOnScrollProps {
@@ -53,44 +53,34 @@ const styles = (theme: Theme) =>
     },
   });
 
-function onAbstractPage(pathname: string) {
-  return pathname.length === '/topics'.length;
-}
-
 function TopicsPage(props: IProps) {
   const { classes, currentThread, setOpenThread, searchBar } = props;
   const { t, ready } = useTranslation();
   const getTranslation = (k: string) => (ready ? t(k) : k);
   const rootPath = getTranslation('Topics');
-
-  const match = useRouteMatch();
   const history = useHistory();
-  const isOnAbstractPage = onAbstractPage(history.location.pathname);
-  const threads = useThreads(isOnAbstractPage);
-  const thread = useThread(currentThread, !isOnAbstractPage);
-
-  const breadCrumbDisplayPath =
-    !currentThread || isOnAbstractPage || !thread.data
-      ? [rootPath]
-      : [rootPath, thread.data.root.title];
-
-  const refreshOnSubTopicPage = !threads.data && !isOnAbstractPage;
+  const { data, isLoading } = useThreads(currentThread);
+  const [loadingNode, setLoadingNode] = useState<ThreadNodeType | undefined>(undefined);
+  const breadCrumbDisplayPath = !currentThread || !data ? [rootPath] : [rootPath, data.root.title];
+  const isOnAbstractView = data?.root.isAbstract && history.location.pathname !== '/topics';
 
   useEffect(() => {
-    if (refreshOnSubTopicPage) {
+    if (isOnAbstractView) {
       history.push('/topics');
     }
-  }, [history, refreshOnSubTopicPage]);
+  }, [history, isOnAbstractView]);
 
   const handleOnOpenTopicClick = (node: ThreadNodeType) => {
-    setOpenThread(node.id);
     history.push('/topics/' + node.title.replaceAll(' ', '-'));
+    setLoadingNode(node);
+    setOpenThread(node.id);
   };
 
-  function handlePathPartClick(index: number, pathPart: string) {
-    if (index) {
+  function handlePathPartClick(index: number) {
+    if (index || !currentThread) {
       window.scrollTo(0, 0);
     } else {
+      setLoadingNode(undefined);
       setOpenThread(null);
     }
   }
@@ -106,32 +96,11 @@ function TopicsPage(props: IProps) {
             />
           </HideOnScroll>
         </div>
-        <Switch>
-          <Route path={`${match.path}/:id`}>
-            {thread.isLoading || !thread.data ? (
-              <LoadingScreen />
-            ) : (
-              <Topic
-                handleOnOpenTopicClick={handleOnOpenTopicClick}
-                key={thread.data.root.id}
-                thread={thread.data}
-              />
-            )}
-          </Route>
-          <Route path={match.path}>
-            {threads.isLoading || !threads.data ? (
-              <LoadingScreen />
-            ) : (
-              threads.data.map((thread) => (
-                <Topic
-                  handleOnOpenTopicClick={handleOnOpenTopicClick}
-                  key={thread.root.id}
-                  thread={thread}
-                />
-              ))
-            )}
-          </Route>
-        </Switch>
+        {isLoading || !data ? (
+          <LoadingScreen loadingNode={loadingNode} />
+        ) : (
+          <Topic handleOnOpenTopicClick={handleOnOpenTopicClick} key={data.root.id} thread={data} />
+        )}
       </Box>
       <RightDrawer />
     </div>

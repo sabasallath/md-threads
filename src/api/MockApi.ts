@@ -4,21 +4,18 @@ import MockData from './MockData';
 import { ThreadType } from '../types/thread.type';
 
 class MockApi {
-  static threads(): Promise<ThreadType[]> {
-    return axiosApiInstance.get('threads').then((res) => res.data);
-  }
-
-  static thread(id: string | null): Promise<ThreadType> {
-    return axiosApiInstance.get(`thread/${id}`).then((res) => res.data);
+  static threads(id: string | null): Promise<ThreadType> {
+    return id
+      ? axiosApiInstance.get(`threads/${id}`).then((res) => res.data)
+      : axiosApiInstance.get(`threads/`).then((res) => res.data);
   }
 }
 
-axiosMock.onGet('threads').reply(200, MockData.threadsAbstract);
-axiosMock.onGet(/\/thread\/\w+/).reply((config) => {
-  const id = config.url?.replace('thread/', '');
-  const thread = MockData.threads.find((e) => e.root.id === id);
-  if (thread) return [200, thread];
-  throw new Error('Mock data error');
+axiosMock.onGet(/threads\/([a-z0-9-]*)?/).reply((config) => {
+  const match = config.url?.match(/threads\/([a-z0-9-]*)?/);
+  const id = match?.[1];
+  const thread = id ? MockData.threads.find((e) => e.root.id === id) : id;
+  return thread ? [200, thread] : [200, MockData.threadsAbstract];
 });
 
 export default MockApi;

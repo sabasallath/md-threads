@@ -13,16 +13,16 @@ import reduce from 'lodash/reduce';
 import groupBy from 'lodash/groupBy';
 
 export class ThreadUtil {
-  static emptyNode(): ThreadNodeType {
+  static emptyNode(descendant: ThreadNodeType[] = []): ThreadNodeType {
     return {
       isPublic: false,
       author: '',
       title: '',
-      descendant: [],
+      descendant: descendant,
       id: '',
-      date: '',
+      date: descendant ? new Date().toISOString() : '',
       markdown: '',
-      isAbstract: false,
+      isAbstract: !!descendant,
     };
   }
 
@@ -82,5 +82,20 @@ export class ThreadUtil {
       },
       {}
     );
+  }
+
+  private static buildAbstractThread(thread: ThreadType): ThreadNodeType {
+    return {
+      ...thread.root,
+      descendant: [],
+      isAbstract: true,
+      markdown: `${thread.root.markdown.substr(0, 150)}...`,
+    };
+  }
+
+  static buildAbstract(threads: ThreadType[]): ThreadType {
+    return {
+      root: ThreadUtil.emptyNode(threads.map((thread) => this.buildAbstractThread(thread))),
+    };
   }
 }

@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CircularProgress,
   IconButton,
   makeStyles,
   Tooltip,
@@ -19,9 +20,12 @@ import { useTranslation } from 'react-i18next';
 import SmsIcon from '@material-ui/icons/Sms';
 import SubjectIcon from '@material-ui/icons/Subject';
 import { useTopicContext } from '../../store/contexts/Topic.context';
+import { RandomUtil } from '../../utils/random.util';
+import clsx from 'clsx';
 
 interface ThreadNodeTypeWithLevel extends ThreadNodeType {
   level: number;
+  loading?: boolean;
 }
 type IProps = ThreadNodeTypeWithLevel;
 
@@ -29,7 +33,7 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
   root: {
     width: '100%',
     backgroundColor: (props) => fade(theme.palette.secondary.light, 0.02 * props.level),
-    paddingLeft: `calc(${theme.spacing(2)}px)`,
+    paddingLeft: (props) => (!props.isAbstract ? `calc(${theme.spacing(2)}px)` : undefined),
   },
   avatar: {
     width: theme.spacing(6),
@@ -37,11 +41,18 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
     backgroundColor: (props) =>
       !props.isPublic ? theme.palette.secondary.dark : theme.palette.secondary.light,
   },
+  loadingBlur: {
+    filter: 'blur(0.25rem)',
+  },
+  circularProgress: {
+    width: '30px',
+    height: '30px',
+  },
 }));
 
 const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
   const classes = useStyles(props);
-  const { title, descendant, date, isPublic, markdown, level, author, isAbstract } = props;
+  const { title, descendant, date, isPublic, markdown, level, author, isAbstract, loading } = props;
   const { t, ready } = useTranslation();
   const { handleOnReplyClick, handleOnOpenTopicClick } = useTopicContext();
   const getTranslation = (k: string) => (ready ? t(k) : k);
@@ -55,6 +66,7 @@ const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
   }
 
   function handleOnClick() {
+    if (loading) return;
     return !isAbstract ? handleOnReplyClick({ ...props }) : handleOnOpenTopicClick({ ...props });
   }
 
@@ -64,38 +76,62 @@ const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
 
   return (
     <Box p={1}>
-      <Card className={classes.root} elevation={!isAbstract ? level : 1}>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="avatar" className={classes.avatar}>
-              {!level ? <SubjectIcon /> : formatAvatar(author)}
-            </Avatar>
-          }
-          action={
-            <Tooltip title={getToolTip()}>
-              <IconButton
-                color={!level ? 'secondary' : undefined}
-                onClick={handleOnClick}
-                aria-label="reply"
-              >
-                {!isAbstract ? <SmsIcon /> : <SubjectIcon />}
-              </IconButton>
-            </Tooltip>
-          }
-          title={<Typography variant={!level ? 'h5' : 'body1'}>{getTitle()}</Typography>}
-          subheader={
-            <>
-              <Typography variant="body1">{author}</Typography>
-              {DateUtil.formatDate(date)}
-            </>
-          }
-        />
+      <Card className={classes.root} elevation={level}>
+        {!(isAbstract && !level) ? (
+          <CardHeader
+            avatar={
+              <Avatar aria-label="avatar" className={classes.avatar}>
+                {!level || isAbstract ? <SubjectIcon /> : formatAvatar(author)}
+              </Avatar>
+            }
+            action={
+              <Tooltip title={getToolTip()}>
+                <IconButton
+                  color={!level || isAbstract ? 'secondary' : undefined}
+                  onClick={handleOnClick}
+                  aria-label="reply"
+                >
+                  {loading ? (
+                    <CircularProgress size={20} color="secondary" />
+                  ) : !isAbstract ? (
+                    <SmsIcon />
+                  ) : (
+                    <SubjectIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+            }
+            title={<Typography variant={!level ? 'h5' : 'body1'}>{getTitle()}</Typography>}
+            subheader={
+              <>
+                <Typography variant="body1">{author}</Typography>
+                {DateUtil.formatDate(date)}
+              </>
+            }
+          />
+        ) : undefined}
+
         <CardContent>
           <ReactMarkdown>{markdown}</ReactMarkdown>
+          {loading && !level ? (
+            <ReactMarkdown className={classes.loadingBlur}>
+              {RandomUtil.genMarkdown(1, 2)}
+            </ReactMarkdown>
+          ) : undefined}
         </CardContent>
-        {descendant.map((e) => {
-          return <MarkdownNode level={level + 1} key={e.id} {...e} />;
-        })}
+
+        <div className={clsx({ [classes.loadingBlur]: loading && !level })}>
+          {descendant.map((e) => {
+            return (
+              <MarkdownNode
+                loading={loading !== undefined && loading}
+                level={level + 1}
+                key={e.id}
+                {...e}
+              />
+            );
+          })}
+        </div>
       </Card>
     </Box>
   );

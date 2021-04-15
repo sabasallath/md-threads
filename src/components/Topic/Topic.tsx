@@ -10,10 +10,11 @@ import { TopicContext } from '../../store/contexts/Topic.context';
 interface IProps extends WithStyles<typeof styles> {
   thread: ThreadType;
   handleOnOpenTopicClick: (node: ThreadNodeType) => void;
+  loading?: boolean;
 }
 const styles = (theme: Theme) => createStyles({});
 
-function Topic({ thread, handleOnOpenTopicClick }: IProps) {
+function Topic({ thread, handleOnOpenTopicClick, loading }: IProps) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -32,7 +33,7 @@ function Topic({ thread, handleOnOpenTopicClick }: IProps) {
           handleOnOpenTopicClick,
         }}
       >
-        <MarkdownNode level={0} {...thread.root} />
+        <MarkdownNode loading={loading !== undefined && loading} level={0} {...thread.root} />
       </TopicContext.Provider>
       <DialogBase fullWidth open={open} handleClose={handleClose} handleOpen={handleOpen}>
         <ReplyDialog node={node} />

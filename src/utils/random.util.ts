@@ -2,7 +2,6 @@ import range from 'lodash/range';
 import chance from '../config/chance';
 import { ThreadNodeBase, ThreadNodeType, ThreadType } from '../types/thread.type';
 import { v4 as uuidv4 } from 'uuid';
-import cloneDeep from 'lodash/cloneDeep';
 
 export class RandomUtil {
   static lorem(p: number): string[] {
@@ -128,16 +127,5 @@ export class RandomUtil {
     return n > 0
       ? range(n).map(() => this.genThread(maxLevel, minDescendant, maxDescendant, convergeFaster))
       : [];
-  }
-  private static buildAbstractThread(thread: ThreadType) {
-    const clone = cloneDeep(thread);
-    clone.root.descendant = [];
-    clone.root.markdown = clone.root.markdown.substr(0, 100) + '...';
-    clone.root.isAbstract = true;
-    return clone;
-  }
-
-  static buildAbstract(threads: ThreadType[]): ThreadType[] {
-    return threads.map((thread) => this.buildAbstractThread(thread));
   }
 }

@@ -22,5 +22,5 @@ export default class Constant {
   static readonly MARKDOWN_EDITOR_AUDIT_TIME = 150;
 
   // Mock
-  static readonly MOCK_API_DELAY_RESPONSE = 600;
+  static readonly MOCK_API_DELAY_RESPONSE = 300;
 }

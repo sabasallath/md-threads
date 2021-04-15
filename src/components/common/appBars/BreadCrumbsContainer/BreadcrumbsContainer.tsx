@@ -7,7 +7,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 
 interface IProps extends WithStyles<typeof styles> {
   path: string[];
-  handlePathPartClick: (index: number, pathPart: string) => void;
+  handlePathPartClick: (index: number) => void;
 }
 
 const styles = (theme: Theme) =>
