@@ -132,6 +132,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
       {DateUtil.formatDateForDisplay(date)}
     </>
   );
+
   return (
     <Box p={1}>
       <Card className={classes.root} elevation={level}>
@@ -146,7 +147,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
 
         <CardContent>
           <ReactMarkdown>{markdown}</ReactMarkdown>
-          {loading && !level ? (
+          {loading && !level && (isPublic || user.token.access_token) ? (
             <ReactMarkdown className={classes.loadingBlur}>
               {RandomUtil.genMarkdown(1, 2)}
             </ReactMarkdown>

@@ -6,4 +6,5 @@ export interface TokenType {
 export interface UserType {
   userName: string | null;
   token: TokenType;
+  loggingLoading: false;
 }

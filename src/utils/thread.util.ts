@@ -100,7 +100,7 @@ export class ThreadUtil {
     };
   }
 
-  static privatize(thread: ThreadType | null): ThreadType | null {
+  static privatize(thread: ThreadType): ThreadType {
     function privatizeNode(node: ThreadNodeBase, level: number): ThreadNodeBase {
       return !node.isPublic
         ? {

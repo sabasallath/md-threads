@@ -1,4 +1,4 @@
-import { Avatar } from '@material-ui/core';
+import { Avatar, CircularProgress } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -29,7 +29,7 @@ const styles = (theme: Theme) =>
   });
 
 function Login(props: IProps) {
-  const { classes, setUser, userName, setToken } = props;
+  const { classes, setUser, userName, setToken, setLoggingLoading } = props;
   const translate = useTranslate();
   const { data, isLoading } = useLogin(userName);
 
@@ -41,13 +41,22 @@ function Login(props: IProps) {
     if (!isLoading) {
       setToken(data);
     }
-  }, [setToken, isLoading, data]);
+    setLoggingLoading(isLoading);
+  }, [setToken, isLoading, data, setLoggingLoading]);
 
   return (
     <ListItem button onClick={handleClickLogin}>
       <ListItemIcon>
         <Avatar className={classes.avatar} color="primary">
-          {userName ? UserUtil.formatAvatar(userName) : <PersonIcon />}
+          {!isLoading || !userName ? (
+            userName ? (
+              UserUtil.formatAvatar(userName)
+            ) : (
+              <PersonIcon />
+            )
+          ) : (
+            <CircularProgress size={25} color="inherit" />
+          )}
         </Avatar>
       </ListItemIcon>
       <ListItemText primary={userName ? translate('Sign out') : translate('Sign in')} />
@@ -57,12 +66,14 @@ function Login(props: IProps) {
 
 const mapStateToProps = (state: RootState) => ({
   userName: state.user.userName,
+  loggingLoading: state.user.loggingLoading,
 });
 
 const actionCreators = {
   setExpandedNavigationDrawer: uiActions.setExpandedNavigationDrawer,
   setUser: userActions.setUser,
   setToken: userActions.setToken,
+  setLoggingLoading: userActions.setLoggingLoading,
 };
 
 const connector = connect(mapStateToProps, actionCreators);

@@ -10,6 +10,7 @@ const initialState: UserSliceType = {
     access_token: '',
     token_type: 'Bearer', // todo remove
   },
+  loggingLoading: false,
 };
 
 const userSlice = createSlice({
@@ -25,6 +26,9 @@ const userSlice = createSlice({
     },
     setToken(state, action) {
       state.token = action.payload;
+    },
+    setLoggingLoading(state, action) {
+      state.loggingLoading = action.payload;
     },
   },
 });
