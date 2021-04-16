@@ -10,11 +10,11 @@ import { ThreadNodeType } from '../types/thread.type';
 import { threadActions } from '../store/features/thread/thread.slice';
 import BreadcrumbsContainer from '../components/common/appBars/BreadCrumbsContainer/BreadcrumbsContainer';
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
 import Constant from '../config/constant';
 import { useHistory } from 'react-router-dom';
-import { useThreads } from '../api/Api';
+import { useThreads } from '../api/api';
 import LoadingScreen from '../components/common/screen/LoadingScreen';
+import { useTranslate } from '../hooks/hooks';
 
 interface HideOnScrollProps {
   children: React.ReactElement;
@@ -54,12 +54,11 @@ const styles = (theme: Theme) =>
   });
 
 function TopicsPage(props: IProps) {
-  const { classes, currentThread, setOpenThread, searchBar } = props;
-  const { t, ready } = useTranslation();
-  const getTranslation = (k: string) => (ready ? t(k) : k);
-  const rootPath = getTranslation('Topics');
+  const { classes, currentThread, setOpenThread, searchBar, token } = props;
+  const translate = useTranslate();
+  const rootPath = translate('Topics');
   const history = useHistory();
-  const { data, isLoading } = useThreads(currentThread);
+  const { data, isLoading } = useThreads(currentThread, token);
   const [loadingNode, setLoadingNode] = useState<ThreadNodeType | undefined>(undefined);
   const breadCrumbDisplayPath =
     !currentThread || !data
@@ -115,6 +114,8 @@ function TopicsPage(props: IProps) {
 const mapStateToProps = (state: RootState) => ({
   searchBar: state.ui.searchBar,
   currentThread: state.thread.currentThread,
+  userName: state.user.userName,
+  token: state.user.token,
 });
 
 const actionCreators = {

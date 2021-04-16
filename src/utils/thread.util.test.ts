@@ -5,7 +5,7 @@ function getNbNodePerLevelFactory(n: number) {
   const thread = RandomUtil.genThreadRegular(n);
   const flattenTree = ThreadUtil.flattenAndGroupById(thread);
   return (level: number) => {
-    return Object.entries(flattenTree).filter(([k, e]) => e.level === level).length;
+    return Object.values(flattenTree).filter((e) => e.level === level).length;
   };
 }
 

@@ -7,8 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import MarkdownEditor from '../markdown/MarkdownEditor';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { useTranslation } from 'react-i18next';
 import { DateUtil } from '../../utils/date.util';
+import { useTranslate } from '../../hooks/hooks';
 
 interface IProps extends WithStyles<typeof styles> {
   node: ThreadNodeType;
@@ -26,32 +26,30 @@ const styles = (theme: Theme) =>
 
 function ReplyDialog({ classes, node }: IProps) {
   const { handleClose } = useDialogBaseContext();
-  const { id, title, date, isPublic, markdown, author } = node;
-  const { t, ready } = useTranslation();
-  const getTranslation = (k: string) => (ready ? t(k) : k);
+  const { title, date, isPublic, markdown, author } = node;
+  const translate = useTranslate();
 
   const handleOnCancelClick = () => {
     handleClose();
   };
 
   const handleOnSendClick = (markdown: string) => {
-    console.log(markdown, id);
     handleClose();
   };
 
   return (
     <>
-      <DialogTitle>{`${getTranslation('Reply to')} ${author}`}</DialogTitle>
+      <DialogTitle>{`${translate('Reply to')} ${author}`}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="button">
               {!isPublic
-                ? `${getTranslation('Previous message')} : (${getTranslation('private')}) ${title}`
-                : `${getTranslation('Previous message')} : ${title}`}
+                ? `${translate('Previous message')} : (${translate('private')}) ${title}`
+                : `${translate('Previous message')} : ${title}`}
             </Typography>
             <Typography className={classes.date} variant="body2">
-              {DateUtil.formatDate(date)}
+              {DateUtil.formatDateForDisplay(date)}
             </Typography>
             <div className={classes.previousMessage}>
               <ReactMarkdown>{markdown}</ReactMarkdown>
