@@ -66,13 +66,24 @@ function TopicsPage(props: IProps) {
         ? [rootPath, loadingNode.title]
         : [rootPath]
       : [rootPath, data.root.title];
-  const isOnAbstractView = data?.root.isAbstract && history.location.pathname !== '/topics';
 
   useEffect(() => {
-    if (isOnAbstractView) {
+    const userRefreshOnSubtopicPage =
+      data?.root.isAbstract && history.location.pathname !== '/topics';
+    const subTopicOutOfSyncWithUrl =
+      !data?.root.isAbstract && history.location.pathname === '/topics';
+
+    if (userRefreshOnSubtopicPage) {
+      // If user refresh page on subtopic we redirect to main topic page
+      // since their is currently no way to retrieve the node id from url
       history.push('/topics');
+    } else if (subTopicOutOfSyncWithUrl && data) {
+      // If user open a subtopic
+      // go to another page and come back to the subtopic page
+      // url needs to be set in sync with current subtopic
+      history.push('/topics/' + data.root.title.replaceAll(' ', '-'));
     }
-  }, [history, isOnAbstractView]);
+  }, [history, data]);
 
   const handleOnOpenTopicClick = (node: ThreadNodeType) => {
     history.push('/topics/' + node.title.replaceAll(' ', '-'));
