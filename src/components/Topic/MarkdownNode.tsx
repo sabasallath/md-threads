@@ -16,18 +16,23 @@ import {
 } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Typography from '@material-ui/core/Typography';
-import { useTranslation } from 'react-i18next';
 import SmsIcon from '@material-ui/icons/Sms';
 import SubjectIcon from '@material-ui/icons/Subject';
 import { useTopicContext } from '../../store/contexts/Topic.context';
 import { RandomUtil } from '../../utils/random.util';
 import clsx from 'clsx';
+import { RootState } from '../../store/store';
+import { connect, ConnectedProps } from 'react-redux';
+import LockIcon from '@material-ui/icons/Lock';
+import UserUtil from '../../utils/user.util';
+import { useTranslate } from '../../hooks/hooks';
 
 interface ThreadNodeTypeWithLevel extends ThreadNodeType {
   level: number;
   loading?: boolean;
 }
-type IProps = ThreadNodeTypeWithLevel;
+type PropsFromRedux = ConnectedProps<typeof connector>;
+interface IProps extends PropsFromRedux, ThreadNodeTypeWithLevel {}
 
 const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
   root: {
@@ -50,64 +55,92 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
   },
 }));
 
-const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
+const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) => {
   const classes = useStyles(props);
-  const { title, descendant, date, isPublic, markdown, level, author, isAbstract, loading } = props;
-  const { t, ready } = useTranslation();
+  const {
+    title,
+    descendant,
+    date,
+    isPublic,
+    markdown,
+    level,
+    author,
+    isAbstract,
+    loading,
+    user,
+  } = props;
+  const translate = useTranslate();
   const { handleOnReplyClick, handleOnOpenTopicClick } = useTopicContext();
-  const getTranslation = (k: string) => (ready ? t(k) : k);
+  const replyOrOpenDisabled = !isPublic && !user.token.access_token && (!level || !isAbstract);
 
-  const formatAvatar = (author: string) => author.split(' ').map((e) => (e?.[0] ? e[0] : ''));
-
-  function getTitle() {
-    // level === 0 is root level
-    const formattedTitle = !level ? `${getTranslation('Topic')} : ${title}` : title;
-    return !isPublic ? `(${getTranslation('private')}) ${formattedTitle}` : formattedTitle;
-  }
+  const MarkdownNodeAvatar = (
+    <Avatar aria-label="avatar" className={classes.avatar}>
+      {isPublic ? (
+        !level || isAbstract ? (
+          <SubjectIcon />
+        ) : (
+          UserUtil.formatAvatar(author)
+        )
+      ) : (
+        <LockIcon />
+      )}
+    </Avatar>
+  );
 
   function handleOnClick() {
-    if (loading) return;
+    if (loading || replyOrOpenDisabled) return;
     return !isAbstract ? handleOnReplyClick({ ...props }) : handleOnOpenTopicClick({ ...props });
   }
 
   function getToolTip() {
-    return !isAbstract ? getTranslation('Reply') : `${getTranslation('Open')}`;
+    return !isAbstract ? translate('Reply') : `${translate('Open')}`;
   }
 
+  const MarkdownNodeAction = (
+    <Tooltip title={getToolTip()}>
+      {!replyOrOpenDisabled || loading ? (
+        <IconButton
+          color={!level || isAbstract ? 'secondary' : undefined}
+          onClick={handleOnClick}
+          aria-label="reply"
+        >
+          {loading ? (
+            <CircularProgress size={20} color="secondary" />
+          ) : !isAbstract ? (
+            <SmsIcon />
+          ) : (
+            <SubjectIcon />
+          )}
+        </IconButton>
+      ) : (
+        <div />
+      )}
+    </Tooltip>
+  );
+
+  function getTitle() {
+    // level === 0 is root level
+    const formattedTitle = !level ? `${translate('Topic')} : ${title}` : title;
+    return !isPublic ? `(${translate('private')}) ${formattedTitle}` : formattedTitle;
+  }
+
+  const MarkdownNodeTitle = <Typography variant={!level ? 'h5' : 'body1'}>{getTitle()}</Typography>;
+
+  const MarkdownNodeSubHeader = (
+    <>
+      <Typography variant="body1">{author}</Typography>
+      {DateUtil.formatDateForDisplay(date)}
+    </>
+  );
   return (
     <Box p={1}>
       <Card className={classes.root} elevation={level}>
         {!(isAbstract && !level) ? (
           <CardHeader
-            avatar={
-              <Avatar aria-label="avatar" className={classes.avatar}>
-                {!level || isAbstract ? <SubjectIcon /> : formatAvatar(author)}
-              </Avatar>
-            }
-            action={
-              <Tooltip title={getToolTip()}>
-                <IconButton
-                  color={!level || isAbstract ? 'secondary' : undefined}
-                  onClick={handleOnClick}
-                  aria-label="reply"
-                >
-                  {loading ? (
-                    <CircularProgress size={20} color="secondary" />
-                  ) : !isAbstract ? (
-                    <SmsIcon />
-                  ) : (
-                    <SubjectIcon />
-                  )}
-                </IconButton>
-              </Tooltip>
-            }
-            title={<Typography variant={!level ? 'h5' : 'body1'}>{getTitle()}</Typography>}
-            subheader={
-              <>
-                <Typography variant="body1">{author}</Typography>
-                {DateUtil.formatDate(date)}
-              </>
-            }
+            avatar={MarkdownNodeAvatar}
+            action={MarkdownNodeAction}
+            title={MarkdownNodeTitle}
+            subheader={MarkdownNodeSubHeader}
           />
         ) : undefined}
 
@@ -137,4 +170,10 @@ const MarkdownNode: React.FunctionComponent<IProps> = (props: IProps) => {
   );
 };
 
+const mapStateToProps = (state: RootState) => ({
+  user: state.user,
+});
+
+const connector = connect(mapStateToProps);
+const MarkdownNode = connector(MarkdownNodeToConnect);
 export default MarkdownNode;

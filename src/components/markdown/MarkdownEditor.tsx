@@ -22,7 +22,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Typography from '@material-ui/core/Typography';
 import Constant from '../../config/constant';
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
+import { useTranslate } from '../../hooks/hooks';
 
 interface IProps extends WithStyles<typeof styles> {
   defaultValue?: string;
@@ -112,7 +112,7 @@ function MarkdownEditor(props: IProps) {
   const [edit, setEdit] = React.useState(true);
   const [editExited, setEditExited] = React.useState(true);
   const markdownStreamSubject = useAuditedMarkdownStream(setMarkdown);
-  const { t, ready } = useTranslation();
+  const translate = useTranslate();
 
   const handleOnChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     markdownStreamSubject?.next(event.target.value);
@@ -143,8 +143,6 @@ function MarkdownEditor(props: IProps) {
     }
   };
 
-  const getTranslation = (k: string) => (ready ? t(k) : k);
-
   return (
     <div className={classes.root}>
       <Card elevation={0}>
@@ -164,7 +162,7 @@ function MarkdownEditor(props: IProps) {
                 >
                   {edit ? <SpeakerNotesIcon /> : <SpeakerNotesOffIcon />}
                 </IconButton>
-                <Typography variant="button">{getTranslation('Edit')}</Typography>
+                <Typography variant="button">{translate('Edit')}</Typography>
               </Toolbar>
             </AppBar>
           </Grid>
@@ -183,7 +181,7 @@ function MarkdownEditor(props: IProps) {
                 >
                   {preview ? <VisibilityIcon /> : <VisibilityOffIcon />}
                 </IconButton>
-                <Typography variant="button">{getTranslation('Preview')}</Typography>
+                <Typography variant="button">{translate('Preview')}</Typography>
               </Toolbar>
             </AppBar>
           </Grid>
@@ -225,7 +223,7 @@ function MarkdownEditor(props: IProps) {
             color="primary"
             aria-label="cancel"
           >
-            {getTranslation('Cancel')}
+            {translate('Cancel')}
           </Button>
           <Button
             onClick={delayHandleOnSendClick()}
@@ -233,7 +231,7 @@ function MarkdownEditor(props: IProps) {
             color="primary"
             aria-label="send"
           >
-            {getTranslation('Send')}
+            {translate('Send')}
           </Button>
         </CardActions>
       </Card>

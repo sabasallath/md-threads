@@ -16,13 +16,13 @@ export class RandomUtil {
     return RandomUtil.lorem(chance.integer({ min, max })).join('\n\n\n');
   }
 
-  private static genThreadNodeBase(): ThreadNodeBase {
+  private static genThreadNodeBase(parentIsPublic = false): ThreadNodeBase {
     return {
       id: uuidv4(),
       title: chance.company(),
       author: chance.name(),
       date: chance.date().toISOString(),
-      isPublic: chance.bool(),
+      isPublic: parentIsPublic ? chance.bool({ likelihood: 60 }) : parentIsPublic,
       markdown: this.genMarkdown(),
       isAbstract: false,
     };
@@ -77,14 +77,22 @@ export class RandomUtil {
     maxLevel: number,
     minDescendant: number,
     maxDescendant: number,
-    convergeFaster: boolean
+    convergeFaster: boolean,
+    parentIsPublic: boolean
   ): ThreadNodeType[] {
     return maxLevel > 0
       ? range(chance.integer({ min: minDescendant, max: maxDescendant })).map(() => {
+          const nodeBase = this.genThreadNodeBase(parentIsPublic);
           return {
-            ...this.genThreadNodeBase(),
+            ...nodeBase,
             descendant: chance.bool({ likelihood: convergeFaster ? 50 : 100 })
-              ? this.genThreadNode(maxLevel - 1, minDescendant, maxDescendant, convergeFaster)
+              ? this.genThreadNode(
+                  maxLevel - 1,
+                  minDescendant,
+                  maxDescendant,
+                  convergeFaster,
+                  nodeBase.isPublic
+                )
               : [],
           };
         })
@@ -97,11 +105,18 @@ export class RandomUtil {
     maxDescendant: number,
     convergeFaster: boolean
   ): ThreadNodeType {
+    const nodeBase = this.genThreadNodeBase(chance.bool({ likelihood: 80 }));
     return {
-      ...this.genThreadNodeBase(),
+      ...nodeBase,
       descendant:
         maxLevel > 0
-          ? this.genThreadNode(maxLevel, minDescendant, maxDescendant, convergeFaster)
+          ? this.genThreadNode(
+              maxLevel,
+              minDescendant,
+              maxDescendant,
+              convergeFaster,
+              nodeBase.isPublic
+            )
           : [],
     };
   }

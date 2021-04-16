@@ -1,4 +1,4 @@
-import { Avatar, Collapse } from '@material-ui/core';
+import { Collapse } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -21,7 +21,6 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import Constant from '../../../config/constant';
@@ -29,6 +28,10 @@ import { uiActions } from '../../../store/features/ui/ui.slice';
 import { RootState } from '../../../store/store';
 import FlagSelection from './FlagSelection/FlagSelection';
 import LeftAppBar from '../appBars/LeftAppBar/LeftAppBar';
+import { userActions } from '../../../store/features/user/user.slice';
+import Login from './Login/Login';
+import { useTranslate } from '../../../hooks/hooks';
+import { useTranslation } from 'react-i18next';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -82,12 +85,6 @@ const styles = (theme: Theme) =>
     nested: {
       paddingLeft: theme.spacing(4),
     },
-    avatar: {
-      fontSize: theme.spacing(2),
-      width: theme.spacing(4),
-      height: theme.spacing(4),
-      backgroundColor: theme.palette.secondary.main,
-    },
   });
 
 function NavigationDrawer(props: IProps) {
@@ -97,7 +94,8 @@ function NavigationDrawer(props: IProps) {
     setExpandedNavigationDrawer,
     openedNavigationDrawer,
   } = props;
-  const { t, ready, i18n } = useTranslation();
+  const { i18n } = useTranslation();
+  const translate = useTranslate();
   const { pathname } = useLocation();
   const [openSettings, setOpenSettings] = React.useState(false);
 
@@ -141,60 +139,51 @@ function NavigationDrawer(props: IProps) {
       }}
     >
       <LeftAppBar />
-      {ready ? (
-        <div className={classes.drawerContent}>
-          <List>
-            {navigationItems.map((item) => (
-              <ListItem
-                selected={pathname === item.to}
-                key={item.name}
-                button
-                component={Link}
-                to={item.to}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={t(item.name)} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <ListItem button onClick={handleClickSettings}>
-            <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-            <ListItemText primary={t('Settings')} />
-            {openSettings ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={openSettings && expandedNavigationDrawer} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem className={classes.nested}>
-                <ListItemIcon>
-                  <FlagSelection />
-                </ListItemIcon>
-                <ListItemText primary={t(i18n.language)} />
-              </ListItem>
-            </List>
-          </Collapse>
-          <Divider />
-          <ListItem>
-            <ListItemIcon>
-              <Avatar className={classes.avatar} color="primary">
-                F
-              </Avatar>
-            </ListItemIcon>
-            <ListItemText primary={'Fake User'} />
-          </ListItem>
-          <Divider />
-          <List>
-            <ListItem button key={'openSettings-drawer'} onClick={handleDrawerOpen}>
+      <div className={classes.drawerContent}>
+        <List>
+          {navigationItems.map((item) => (
+            <ListItem
+              selected={pathname === item.to}
+              key={item.name}
+              button
+              component={Link}
+              to={item.to}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={translate(item.name)} />
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <ListItem button onClick={handleClickSettings}>
+          <ListItemIcon>
+            <Settings />
+          </ListItemIcon>
+          <ListItemText primary={translate('Settings')} />
+          {openSettings ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={openSettings && expandedNavigationDrawer} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem className={classes.nested}>
               <ListItemIcon>
-                {!expandedNavigationDrawer ? <ChevronRight /> : <ChevronLeft />}
+                <FlagSelection />
               </ListItemIcon>
-              <ListItemText primary={t('Reduce menu')} />
+              <ListItemText primary={translate(i18n.language)} />
             </ListItem>
           </List>
-        </div>
-      ) : null}
+        </Collapse>
+        <Divider />
+        <Login />
+        <Divider />
+        <List>
+          <ListItem button key={'openSettings-drawer'} onClick={handleDrawerOpen}>
+            <ListItemIcon>
+              {!expandedNavigationDrawer ? <ChevronRight /> : <ChevronLeft />}
+            </ListItemIcon>
+            <ListItemText primary={translate('Reduce menu')} />
+          </ListItem>
+        </List>
+      </div>
     </Drawer>
   );
 }
@@ -202,10 +191,12 @@ function NavigationDrawer(props: IProps) {
 const mapStateToProps = (state: RootState) => ({
   openedNavigationDrawer: state.ui.openedNavigationDrawer,
   expandedNavigationDrawer: state.ui.expandedNavigationDrawer,
+  userName: state.user.userName,
 });
 
 const actionCreators = {
   setExpandedNavigationDrawer: uiActions.setExpandedNavigationDrawer,
+  setUser: userActions.setUser,
 };
 
 const connector = connect(mapStateToProps, actionCreators);

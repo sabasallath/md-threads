@@ -23,4 +23,8 @@ export default class Constant {
 
   // Mock
   static readonly MOCK_API_DELAY_RESPONSE = 300;
+
+  // Date format
+  static readonly DATE_DISPLAY_FORMAT = 'dd/MM/yyyy - HH:mm';
+  static readonly INVALID_DATE_FORMAT_MESSAGE = 'Invalid date format';
 }

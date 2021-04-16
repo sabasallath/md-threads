@@ -1,6 +1,7 @@
 import {
   FlatThreadNodeType,
   ThreadFlatMap,
+  ThreadNodeBase,
   ThreadNodeType,
   ThreadType,
 } from '../types/thread.type';
@@ -97,5 +98,41 @@ export class ThreadUtil {
     return {
       root: ThreadUtil.emptyNode(threads.map((thread) => this.buildAbstractThread(thread))),
     };
+  }
+
+  static privatize(thread: ThreadType | null): ThreadType | null {
+    function privatizeNode(node: ThreadNodeBase, level: number): ThreadNodeBase {
+      return !node.isPublic
+        ? {
+            ...node,
+            title: !level || node.isAbstract ? node.title : '',
+            author: '******',
+            markdown: '',
+          }
+        : node;
+    }
+
+    function privatizeNodeRec(node: ThreadNodeType, level: number): ThreadNodeType {
+      return {
+        ...privatizeNode(node, level),
+        descendant: node.descendant.map((e) => privatizeNodeRec(e, level + 1)),
+      };
+    }
+
+    function privatizeRoot(thread: ThreadType): ThreadType {
+      const rootLevel = 0;
+      return {
+        root: {
+          ...privatizeNode(thread.root, rootLevel),
+          descendant: thread.root.descendant.map((e) => privatizeNodeRec(e, rootLevel + 1)),
+        },
+      };
+    }
+
+    if (thread) {
+      return privatizeRoot(thread);
+    } else {
+      return thread;
+    }
   }
 }

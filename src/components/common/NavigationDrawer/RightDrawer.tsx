@@ -12,11 +12,11 @@ import Constant from '../../../config/constant';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { useTranslation } from 'react-i18next';
 import { RootState } from '../../../store/store';
 import SearchIcon from '@material-ui/icons/Search';
 import { FormGroup, IconButton, Switch } from '@material-ui/core';
 import { uiActions } from '../../../store/features/ui/ui.slice';
+import { useTranslate } from '../../../hooks/hooks';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -61,7 +61,7 @@ const styles = (theme: Theme) =>
 
 function RightDrawer(props: IProps) {
   const { classes, expandedRightDrawer, setExpandedRightDrawer, setSearchBar, searchBar } = props;
-  const { t, ready } = useTranslation();
+  const translate = useTranslate();
 
   const [state, setState] = React.useState({
     search: searchBar,
@@ -100,44 +100,42 @@ function RightDrawer(props: IProps) {
       <div style={{ flexGrow: 1 }}>
         {expandedRightDrawer ? <span>Right drawer content</span> : ''}
       </div>
-      {ready ? (
-        <div className={classes.drawerContent}>
-          <Divider />
-          <FormGroup>
-            <List dense style={{ flexGrow: 1 }}>
-              {navigationItems.map((item) => (
-                <ListItem key={item.name} style={{ flexGrow: 1, display: 'flex' }}>
-                  <ListItemIcon>
-                    <IconButton
-                      color={state[item.switchName] ? 'secondary' : 'default'}
-                      onClick={() => handleChange(item.switchName)}
-                      size="small"
-                    >
-                      {item.icon}
-                    </IconButton>
-                  </ListItemIcon>
-                  <ListItemText primary={t(item.name)} />
-                  <span>{state[item.name]}</span>
-                  <Switch
+      <div className={classes.drawerContent}>
+        <Divider />
+        <FormGroup>
+          <List dense style={{ flexGrow: 1 }}>
+            {navigationItems.map((item) => (
+              <ListItem key={item.name} style={{ flexGrow: 1, display: 'flex' }}>
+                <ListItemIcon>
+                  <IconButton
+                    color={state[item.switchName] ? 'secondary' : 'default'}
+                    onClick={() => handleChange(item.switchName)}
                     size="small"
-                    checked={state[item.switchName] || false}
-                    onChange={() => handleChange(item.switchName)}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </FormGroup>
-          <Divider />
-          <List>
-            <ListItem button key={'openSettings-drawer'} onClick={handleDrawerOpen}>
-              <ListItemIcon>
-                {!expandedRightDrawer ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-              </ListItemIcon>
-              <ListItemText primary={t('Reduce menu')} />
-            </ListItem>
+                  >
+                    {item.icon}
+                  </IconButton>
+                </ListItemIcon>
+                <ListItemText primary={translate(item.name)} />
+                <span>{state[item.name]}</span>
+                <Switch
+                  size="small"
+                  checked={state[item.switchName] || false}
+                  onChange={() => handleChange(item.switchName)}
+                />
+              </ListItem>
+            ))}
           </List>
-        </div>
-      ) : null}
+        </FormGroup>
+        <Divider />
+        <List>
+          <ListItem button key={'openSettings-drawer'} onClick={handleDrawerOpen}>
+            <ListItemIcon>
+              {!expandedRightDrawer ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </ListItemIcon>
+            <ListItemText primary={translate('Reduce menu')} />
+          </ListItem>
+        </List>
+      </div>
     </Drawer>
   );
 }
