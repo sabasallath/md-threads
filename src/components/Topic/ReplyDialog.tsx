@@ -9,8 +9,13 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { DateUtil } from '../../utils/date.util';
 import { useTranslate } from '../../hooks/hooks';
+import { useReply } from '../../api/api';
+import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from '../../store/store';
+import { useTopicContext } from '../../store/contexts/Topic.context';
 
-interface IProps extends WithStyles<typeof styles> {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
   node: ThreadNodeType;
 }
 const styles = (theme: Theme) =>
@@ -24,18 +29,38 @@ const styles = (theme: Theme) =>
     },
   });
 
-function ReplyDialog({ classes, node }: IProps) {
+function ReplyDialog({ classes, node, flattenThread, user, token }: IProps) {
   const { handleClose } = useDialogBaseContext();
+  const { rootNodeId } = useTopicContext();
   const { title, date, isPublic, markdown, author } = node;
   const translate = useTranslate();
+  // todo handle error
+  const { mutate, isLoading } = useReply(node.id, rootNodeId, token);
 
   const handleOnCancelClick = () => {
     handleClose();
   };
 
   const handleOnSendClick = (markdown: string) => {
+    const fromRootPathToNodeExcluded = flattenThread?.[node.id].fromRootPathToNodeIncluded;
+    if (fromRootPathToNodeExcluded) {
+      mutate({
+        fromRootPathToNodeExcluded: fromRootPathToNodeExcluded,
+        title: 'Re: ' + node.title,
+        markdown: markdown,
+        isPublic: true,
+        author: user?.userName ? user.userName : '',
+      });
+    }
     handleClose();
   };
+
+  // todo choose dialog closing strategy
+  // useEffect(() => {
+  //   if (!isLoading && isSuccess) {
+  //     handleClose();
+  //   }
+  // }, [isLoading, isSuccess, handleClose]);
 
   return (
     <>
@@ -60,6 +85,7 @@ function ReplyDialog({ classes, node }: IProps) {
           </Grid>
           <Grid item xs={12}>
             <MarkdownEditor
+              isLoading={isLoading}
               defaultValue={''}
               handleOnSendClick={handleOnSendClick}
               handleOnCancelClick={handleOnCancelClick}
@@ -71,4 +97,12 @@ function ReplyDialog({ classes, node }: IProps) {
   );
 }
 
-export default withStyles(styles)(ReplyDialog);
+const mapStateToProps = (state: RootState) => ({
+  user: state.user,
+  flattenThread: state.thread.flattenThread,
+  token: state.user.token,
+});
+
+const connector = connect(mapStateToProps);
+
+export default connector(withStyles(styles)(ReplyDialog));

@@ -5,13 +5,14 @@ import {
   Button,
   Card,
   CardActions,
+  CircularProgress,
   Fade,
   Grid,
   IconButton,
   Toolbar,
 } from '@material-ui/core';
 import { SubjectUtil, SubObs } from '../../utils/subject.util';
-import { auditTime } from 'rxjs/operators';
+import { auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
@@ -28,6 +29,7 @@ interface IProps extends WithStyles<typeof styles> {
   defaultValue?: string;
   handleOnCancelClick: () => void;
   handleOnSendClick: (markdown: string) => void;
+  isLoading?: boolean;
 }
 
 const styles = (theme: Theme) => {
@@ -76,6 +78,10 @@ const styles = (theme: Theme) => {
       justifyContent: 'flex-end',
       marginTop: theme.spacing(1),
     },
+    button: {
+      minWidth: '100px',
+      minHeight: 42,
+    },
   });
 };
 
@@ -93,7 +99,8 @@ function useAuditedMarkdownStream(
   useEffect(() => {
     const stream = SubjectUtil.subjectObs<string>();
     const auditedStream: Observable<string> = stream.obs$.pipe(
-      auditTime(Constant.MARKDOWN_EDITOR_AUDIT_TIME)
+      auditTime(Constant.MARKDOWN_EDITOR_AUDIT_TIME * 2),
+      distinctUntilChanged((prev, curr) => prev === curr)
     );
     const subs = [stream.subject?.subscribe(), auditedStream?.subscribe(setMarkdown)];
 
@@ -105,7 +112,7 @@ function useAuditedMarkdownStream(
 }
 
 function MarkdownEditor(props: IProps) {
-  const { classes, defaultValue, handleOnCancelClick, handleOnSendClick } = props;
+  const { classes, defaultValue, handleOnCancelClick, handleOnSendClick, isLoading } = props;
   const [markdown, setMarkdown] = React.useState(defaultValue ? defaultValue : '');
   const [preview, setPreview] = React.useState(true);
   const [previewExited, setPreviewExited] = React.useState(true);
@@ -124,7 +131,13 @@ function MarkdownEditor(props: IProps) {
    * (An alternative need to be set up if the delay is big enough)
    */
   function delayHandleOnSendClick() {
-    return () => setTimeout(() => handleOnSendClick(markdown), Constant.MARKDOWN_EDITOR_AUDIT_TIME);
+    // todo prevent second click
+    return () =>
+      setTimeout(() => {
+        if (!isLoading) {
+          handleOnSendClick(markdown);
+        }
+      }, Constant.MARKDOWN_EDITOR_AUDIT_TIME);
   }
 
   const handlePreviewButtonClick = () => {
@@ -218,6 +231,8 @@ function MarkdownEditor(props: IProps) {
         </Grid>
         <CardActions className={classes.cardActions}>
           <Button
+            className={classes.button}
+            disabled={isLoading}
             onClick={handleOnCancelClick}
             variant="outlined"
             color="primary"
@@ -226,12 +241,14 @@ function MarkdownEditor(props: IProps) {
             {translate('Cancel')}
           </Button>
           <Button
+            className={classes.button}
+            disabled={isLoading}
             onClick={delayHandleOnSendClick()}
             variant="contained"
             color="primary"
             aria-label="send"
           >
-            {translate('Send')}
+            {!isLoading ? translate('Send') : <CircularProgress size={25} color="inherit" />}
           </Button>
         </CardActions>
       </Card>

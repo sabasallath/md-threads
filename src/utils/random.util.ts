@@ -25,6 +25,7 @@ export class RandomUtil {
       isPublic: parentIsPublic ? chance.bool({ likelihood: 60 }) : parentIsPublic,
       markdown: this.genMarkdown(),
       isAbstract: false,
+      isPlaceHolder: false,
     };
   }
 
@@ -103,9 +104,10 @@ export class RandomUtil {
     maxLevel: number,
     minDescendant: number,
     maxDescendant: number,
-    convergeFaster: boolean
+    convergeFaster: boolean,
+    forcePrivate = false
   ): ThreadNodeType {
-    const nodeBase = this.genThreadNodeBase(chance.bool({ likelihood: 80 }));
+    const nodeBase = this.genThreadNodeBase(chance.bool({ likelihood: forcePrivate ? 0 : 80 }));
     return {
       ...nodeBase,
       descendant:
@@ -125,10 +127,17 @@ export class RandomUtil {
     maxLevel: number,
     minDescendant: number,
     maxDescendant: number,
-    convergeFaster = false
+    convergeFaster = false,
+    forcePrivate = false
   ): ThreadType {
     return {
-      root: this.genThreadNodeRoot(maxLevel, minDescendant, maxDescendant, convergeFaster),
+      root: this.genThreadNodeRoot(
+        maxLevel,
+        minDescendant,
+        maxDescendant,
+        convergeFaster,
+        forcePrivate
+      ),
     };
   }
 

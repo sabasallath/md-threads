@@ -19,18 +19,17 @@ const styles = () => createStyles({});
 
 function LoadingScreen(props: IProps) {
   const { loadingNode, token } = props;
-  const randomThread = RandomUtil.genThreads(1, 2, 1, 3, true).map((thread) => {
-    if (loadingNode) {
-      // todo better loading Thread generation
-      if (!token.access_token) {
-        thread = ThreadUtil.privatize(thread);
-      }
-      thread.root.title = loadingNode.title;
-      thread.root.markdown = loadingNode.markdown;
-      thread.root.isPublic = loadingNode.isPublic;
-      thread.root.date = loadingNode.date;
-      thread.root.author = loadingNode.author;
-      thread.root.id = loadingNode.id;
+
+  if (loadingNode) {
+    let thread = RandomUtil.genThread(2, 3, 5, true, true);
+    thread.root = {
+      ...loadingNode,
+      descendant: thread.root.descendant,
+      isAbstract: thread.root.isAbstract,
+    };
+
+    if (!token.access_token) {
+      thread = ThreadUtil.privatize(thread);
     }
 
     return (
@@ -43,10 +42,6 @@ function LoadingScreen(props: IProps) {
         loading={true}
       />
     );
-  });
-
-  if (loadingNode) {
-    return <>{randomThread}</>;
   }
 
   return (

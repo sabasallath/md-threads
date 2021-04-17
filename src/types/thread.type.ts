@@ -8,6 +8,7 @@ export interface ThreadNodeBase {
   markdown: string;
   isPublic: boolean;
   isAbstract: boolean;
+  isPlaceHolder: boolean; // For optimistic update
 }
 
 export interface ThreadNodeType extends ThreadNodeBase, TreeNode<ThreadNodeType> {
@@ -19,7 +20,7 @@ export interface ThreadType {
 }
 
 export interface FlatThreadNodeType extends ThreadNodeBase {
-  fromRootPathToNodeIncluded: FlatThreadNodeType[];
+  fromRootPathToNodeIncluded: string[];
   level: number;
 }
 

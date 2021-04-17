@@ -31,13 +31,14 @@ function Topic({ thread, handleOnOpenTopicClick, loading }: IProps) {
         value={{
           handleOnReplyClick,
           handleOnOpenTopicClick,
+          rootNodeId: thread.root.id,
         }}
       >
-        <MarkdownNode loading={loading !== undefined && loading} level={0} {...thread.root} />
+        <MarkdownNode loading={loading !== undefined && loading} level={0} node={thread.root} />
+        <DialogBase fullWidth open={open} handleClose={handleClose} handleOpen={handleOpen}>
+          <ReplyDialog node={node} />
+        </DialogBase>
       </TopicContext.Provider>
-      <DialogBase fullWidth open={open} handleClose={handleClose} handleOpen={handleOpen}>
-        <ReplyDialog node={node} />
-      </DialogBase>
     </div>
   );
 }
