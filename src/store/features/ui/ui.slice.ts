@@ -6,6 +6,7 @@ const initialState = {
   expandedNavigationDrawer: Constant.NAVIGATION_DRAWER_START_EXPANDED,
   expandedRightDrawer: Constant.RIGHT_DRAWER_START_EXPANDED,
   searchBar: Constant.SEARCH_BAR_START_VISIBLE,
+  couldNotSendReplyError: null,
 };
 
 const uiSlice = createSlice({
@@ -23,6 +24,9 @@ const uiSlice = createSlice({
     },
     setSearchBar(state, action) {
       state.searchBar = action.payload;
+    },
+    setCouldNotSendReplyError(state, action) {
+      state.couldNotSendReplyError = action.payload;
     },
   },
 });

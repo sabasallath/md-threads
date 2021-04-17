@@ -54,7 +54,7 @@ const styles = (theme: Theme) =>
   });
 
 function TopicsPage(props: IProps) {
-  const { classes, currentThread, setOpenThread, searchBar, token } = props;
+  const { classes, currentThread, setOpenThread, setFlattenThread, searchBar, token } = props;
   const translate = useTranslate();
   const rootPath = translate('Topics');
   const history = useHistory();
@@ -85,20 +85,26 @@ function TopicsPage(props: IProps) {
     }
   }, [history, data]);
 
+  useEffect(() => {
+    if (!isLoading && data) {
+      setFlattenThread(data);
+    }
+  }, [data, isLoading, setFlattenThread]);
+
   const handleOnOpenTopicClick = (node: ThreadNodeType) => {
     history.push('/topics/' + node.title.replaceAll(' ', '-'));
     setLoadingNode(node);
     setOpenThread(node.id);
   };
 
-  function handlePathPartClick(index: number) {
+  const handlePathPartClick = (index: number) => {
     if (index || !currentThread) {
       window.scrollTo(0, 0);
     } else {
       setLoadingNode(undefined);
       setOpenThread(null);
     }
-  }
+  };
 
   return (
     <div className={classes.root}>
@@ -131,6 +137,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const actionCreators = {
   setOpenThread: threadActions.setOpenThread,
+  setFlattenThread: threadActions.setFlattenThread,
 };
 
 const connector = connect(mapStateToProps, actionCreators);

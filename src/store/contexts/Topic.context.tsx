@@ -4,6 +4,7 @@ import { ThreadNodeType } from '../../types/thread.type';
 export interface TopicContextType {
   handleOnReplyClick: (node: ThreadNodeType) => void;
   handleOnOpenTopicClick: (node: ThreadNodeType) => void;
+  rootNodeId: string;
 }
 
 export const TopicContext = createContext<TopicContextType>({
@@ -13,5 +14,6 @@ export const TopicContext = createContext<TopicContextType>({
   handleOnOpenTopicClick: (node: ThreadNodeType) => {
     return;
   },
+  rootNodeId: '',
 });
 export const useTopicContext = (): TopicContextType => React.useContext(TopicContext);

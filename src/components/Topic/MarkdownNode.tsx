@@ -18,6 +18,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Typography from '@material-ui/core/Typography';
 import SmsIcon from '@material-ui/icons/Sms';
 import SubjectIcon from '@material-ui/icons/Subject';
+import PersonIcon from '@material-ui/icons/Person';
 import { useTopicContext } from '../../store/contexts/Topic.context';
 import { RandomUtil } from '../../utils/random.util';
 import clsx from 'clsx';
@@ -27,9 +28,10 @@ import LockIcon from '@material-ui/icons/Lock';
 import UserUtil from '../../utils/user.util';
 import { useTranslate } from '../../hooks/hooks';
 
-interface ThreadNodeTypeWithLevel extends ThreadNodeType {
+interface ThreadNodeTypeWithLevel {
   level: number;
   loading?: boolean;
+  node: ThreadNodeType;
 }
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface IProps extends PropsFromRedux, ThreadNodeTypeWithLevel {}
@@ -38,13 +40,13 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
   root: {
     width: '100%',
     backgroundColor: (props) => fade(theme.palette.secondary.light, 0.02 * props.level),
-    paddingLeft: (props) => (!props.isAbstract ? `calc(${theme.spacing(2)}px)` : undefined),
+    paddingLeft: (props) => (!props.node.isAbstract ? `calc(${theme.spacing(2)}px)` : undefined),
   },
   avatar: {
     width: theme.spacing(6),
     height: theme.spacing(6),
     backgroundColor: (props) =>
-      !props.isPublic ? theme.palette.secondary.dark : theme.palette.secondary.light,
+      !props.node.isPublic ? theme.palette.secondary.dark : theme.palette.secondary.light,
   },
   loadingBlur: {
     filter: 'blur(0.25rem)',
@@ -53,33 +55,29 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
     width: '30px',
     height: '30px',
   },
+  buttonPlaceholder: {
+    width: '54px',
+    height: '54px',
+  },
 }));
 
 const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) => {
   const classes = useStyles(props);
-  const {
-    title,
-    descendant,
-    date,
-    isPublic,
-    markdown,
-    level,
-    author,
-    isAbstract,
-    loading,
-    user,
-  } = props;
+  const { loading, user, level, node } = props;
+  const { title, descendant, date, isPublic, markdown, author, isAbstract, isPlaceHolder } = node;
   const translate = useTranslate();
   const { handleOnReplyClick, handleOnOpenTopicClick } = useTopicContext();
   const replyOrOpenDisabled = !isPublic && !user.token.access_token && (!level || !isAbstract);
 
   const MarkdownNodeAvatar = (
     <Avatar aria-label="avatar" className={classes.avatar}>
-      {isPublic ? (
+      {isPublic || user.token.access_token ? (
         !level || isAbstract ? (
           <SubjectIcon />
-        ) : (
+        ) : author ? (
           UserUtil.formatAvatar(author)
+        ) : (
+          <PersonIcon />
         )
       ) : (
         <LockIcon />
@@ -88,8 +86,8 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
   );
 
   function handleOnClick() {
-    if (loading || replyOrOpenDisabled) return;
-    return !isAbstract ? handleOnReplyClick({ ...props }) : handleOnOpenTopicClick({ ...props });
+    if (isPlaceHolder || loading || replyOrOpenDisabled) return;
+    return !isAbstract ? handleOnReplyClick(node) : handleOnOpenTopicClick(node);
   }
 
   function getToolTip() {
@@ -104,7 +102,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
           onClick={handleOnClick}
           aria-label="reply"
         >
-          {loading ? (
+          {isPlaceHolder || loading ? (
             <CircularProgress size={20} color="secondary" />
           ) : !isAbstract ? (
             <SmsIcon />
@@ -113,7 +111,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
           )}
         </IconButton>
       ) : (
-        <div />
+        <div className={classes.buttonPlaceholder} />
       )}
     </Tooltip>
   );
@@ -161,7 +159,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
                 loading={loading !== undefined && loading}
                 level={level + 1}
                 key={e.id}
-                {...e}
+                node={e}
               />
             );
           })}
