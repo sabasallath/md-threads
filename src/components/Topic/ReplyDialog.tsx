@@ -34,7 +34,6 @@ function ReplyDialog({ classes, node, flattenThread, user, token }: IProps) {
   const { rootNodeId } = useTopicContext();
   const { title, date, isPublic, markdown, author } = node;
   const translate = useTranslate();
-  // todo handle error
   const { mutate, isLoading } = useReply(node.id, rootNodeId, token);
 
   const handleOnCancelClick = () => {
@@ -54,13 +53,6 @@ function ReplyDialog({ classes, node, flattenThread, user, token }: IProps) {
     }
     handleClose();
   };
-
-  // todo choose dialog closing strategy
-  // useEffect(() => {
-  //   if (!isLoading && isSuccess) {
-  //     handleClose();
-  //   }
-  // }, [isLoading, isSuccess, handleClose]);
 
   return (
     <>

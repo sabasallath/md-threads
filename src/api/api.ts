@@ -6,6 +6,8 @@ import { PayloadType } from '../types/payload.type';
 import queryClient from '../config/queryClient';
 import { ThreadUtil } from '../utils/thread.util';
 import cloneDeep from 'lodash/cloneDeep';
+import store from '../store/store';
+import { uiActions } from '../store/features/ui/ui.slice';
 
 export function useThreads(
   key: string | null,
@@ -65,6 +67,7 @@ export function useReply(
       },
       onError: (err, newTodo, context) => {
         queryClient.setQueryData(queryKey, (context as ReplyContext)?.previousDataSnapshot);
+        store.dispatch(uiActions.setCouldNotSendReplyError(err.message));
       },
       onSettled: () => {
         queryClient.invalidateQueries([
