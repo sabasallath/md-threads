@@ -11,7 +11,6 @@ import MenuBookIcon from '@material-ui/icons/MenuBook';
 import { Typography } from '@material-ui/core';
 import { connect, ConnectedProps } from 'react-redux';
 import clsx from 'clsx';
-import { scroller } from 'react-scroll';
 import union from 'lodash/union';
 import difference from 'lodash/difference';
 import { useScrollSpy } from '../../../../../store/contexts/ScrollSpyContext';
@@ -22,7 +21,7 @@ import { ThreadUtil } from '../../../../../utils/thread.util';
 import cloneDeep from 'lodash/cloneDeep';
 import queryClient from '../../../../../config/queryClient';
 import SmsIcon from '@material-ui/icons/Sms';
-import { useTranslate } from '../../../../../hooks/hooks';
+import { useScrollToNode, useTranslate } from '../../../../../hooks/hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -114,6 +113,7 @@ function CustomizedTreeView(props: IProps) {
   const [expanded, setExpanded] = React.useState<string[]>([]);
   const [selected, setSelected] = React.useState<string>('');
   const { spy, auditedSpy$, pauseSpy$ } = useScrollSpy();
+  const scrollToNode = useScrollToNode();
   const queryKey = ['threads', currentThread, token?.access_token ? token.access_token : null];
   const thread = queryClient.getQueryData(queryKey) as ThreadType | undefined;
   const isAbstract = thread && thread?.root?.isAbstract;
@@ -161,12 +161,7 @@ function CustomizedTreeView(props: IProps) {
   const onLabelClick = (nodeId: string) => {
     setPause(Constant.SCROLL_ANIMATION_PAUSE_DURATION);
     if (nodeId) {
-      scroller.scrollTo(nodeId, {
-        duration: Constant.SCROLL_DURATION,
-        delay: Constant.SCROLL_DELAY,
-        smooth: true,
-        offset: searchBar ? -50 - 64 : -50, // todo fix hardcoded value
-      });
+      scrollToNode(nodeId);
       setSelected(nodeId);
       if (flatMap) {
         setExpanded(flatMap[nodeId].fromRootPathToNodeIncluded);

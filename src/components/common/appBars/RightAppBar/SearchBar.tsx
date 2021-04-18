@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import { AppBar, Divider, IconButton, InputBase, Paper, Toolbar } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import SearchIcon from '@material-ui/icons/Search';
 import SettingsIcon from '@material-ui/icons/Settings';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import PeopleIcon from '@material-ui/icons/People';
+import TodayIcon from '@material-ui/icons/Today';
 import { connect, ConnectedProps } from 'react-redux';
 import clsx from 'clsx';
 import { RootState } from '../../../../store/store';
 import Constant from '../../../../config/constant';
+import { useScrollToNode } from '../../../../hooks/hooks';
+import { ThreadUtil } from '../../../../utils/thread.util';
+import { ThreadNodeType } from '../../../../types/thread.type';
+import { getYear, parseISO } from 'date-fns';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -16,7 +21,8 @@ interface IProps extends Props, WithStyles<typeof styles> {}
 
 export interface SearchItem {
   group: string;
-  fieldAndValue: string;
+  displayValue: string;
+  value: string;
 }
 
 const styles = (theme: Theme) =>
@@ -55,6 +61,12 @@ const styles = (theme: Theme) =>
     iconButton: {
       padding: 10,
     },
+    searchIcon: {
+      color: theme.palette.text.secondary,
+    },
+    settingsIcon: {
+      color: theme.palette.action.disabled,
+    },
     divider: {
       height: 28,
       margin: 4,
@@ -62,35 +74,67 @@ const styles = (theme: Theme) =>
   });
 
 function SearchBar(props: IProps) {
-  const { classes, searchBar } = props;
-  const [searchExpand, setSearchExpand] = useState(false);
-  const options: SearchItem[] = [];
+  const { classes, searchBar, flatMap, token, currentThread } = props;
+  const scrollToNode = useScrollToNode();
 
-  const handleClickSettings = () => {
-    setSearchExpand(!searchExpand);
+  const groupByIcon = {
+    author: <PeopleIcon key={'author'} />,
+    year: <TodayIcon key={'year'} />,
+    none: <SettingsIcon className={classes.settingsIcon} key={'none'} />,
   };
 
-  function searchBarSettings() {
-    return (
-      <>
-        <IconButton disabled={true} className={classes.iconButton} aria-label="search">
-          <VisibilityIcon />
-        </IconButton>
-        <Divider className={classes.divider} orientation="vertical" />
-        <IconButton
-          disabled={true}
-          className={classes.iconButton}
-          aria-label="settings"
-          onClick={handleClickSettings}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </>
-    );
-  }
+  const groupByOptions = ['author', 'year', 'none'];
+  const [groupBy, setGroupBy] = useState<string>('none');
 
-  const handleOnChange = () => {
-    console.log('handleOnChange');
+  const options: SearchItem[] = useMemo(
+    () =>
+      flatMap
+        ? ThreadUtil.sortByDate(
+            Object.values(flatMap)
+              .filter((e) => e.level !== 0)
+              .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType))
+          )
+            .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType))
+            .filter((e) => e.isPublic || token?.access_token)
+            .map((e) => ({
+              group:
+                groupBy === 'author'
+                  ? e.author
+                  : groupBy === 'year'
+                  ? getYear(parseISO(e.date)).toString(10)
+                  : '',
+              displayValue: e.title,
+              value: e.id,
+            }))
+        : [],
+    [flatMap, token?.access_token, groupBy]
+  );
+
+  const handleGroupByButtonClick = () => {
+    const index = groupByOptions.findIndex((e) => e === groupBy);
+    if (index >= 0) {
+      setGroupBy(groupByOptions[(index + 1) % groupByOptions.length]);
+    }
+  };
+
+  const searchBarSettings = () => (
+    <>
+      <Divider className={classes.divider} orientation="vertical" />
+      <IconButton
+        className={classes.iconButton}
+        aria-label="settings"
+        onClick={handleGroupByButtonClick}
+      >
+        {groupByIcon[groupBy]}
+      </IconButton>
+    </>
+  );
+
+  const handleOnChange = (event: React.ChangeEvent<unknown>, value: SearchItem | null) => {
+    event.preventDefault();
+    if (value) {
+      scrollToNode(value.value);
+    }
   };
 
   return (
@@ -99,12 +143,14 @@ function SearchBar(props: IProps) {
         <div className={classes.toolBarContent}>
           {options && (
             <Autocomplete
-              id="grouped-demo"
+              key={currentThread + token.access_token} // reset value on rerender
+              id="search"
               ListboxProps={{ style: { maxHeight: 400 } }}
               onChange={handleOnChange}
               options={options.sort((a, b) => -b.group.localeCompare(a.group))}
+              getOptionSelected={(option, value) => option.value === value.value}
               groupBy={(option) => option.group}
-              getOptionLabel={(option) => option.fieldAndValue}
+              getOptionLabel={(option) => option.displayValue}
               style={{ width: '100%' }}
               renderInput={(params) => (
                 <Paper
@@ -113,8 +159,14 @@ function SearchBar(props: IProps) {
                   component="form"
                   className={classes.searchRoot}
                 >
-                  <IconButton aria-readonly="true" className={classes.iconButton} aria-label="menu">
-                    <SearchIcon />
+                  <IconButton
+                    color="secondary"
+                    disabled={true}
+                    aria-readonly="true"
+                    className={classes.iconButton}
+                    aria-label="menu"
+                  >
+                    <SearchIcon className={classes.searchIcon} />
                   </IconButton>
                   <InputBase
                     {...params.inputProps}
@@ -135,6 +187,9 @@ function SearchBar(props: IProps) {
 
 const mapStateToProps = (state: RootState) => ({
   searchBar: state.ui.searchBar,
+  flatMap: state.thread.flatMap,
+  token: state.user.token,
+  currentThread: state.thread.currentThread,
 });
 
 const connector = connect(mapStateToProps);
