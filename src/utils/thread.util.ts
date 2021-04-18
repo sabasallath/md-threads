@@ -191,7 +191,7 @@ export class ThreadUtil {
       root: {
         ...data.root,
         descendant: Object.values(flattenThread)
-          .filter((e) => e.id) // remove root node on abstract thread
+          .filter((e) => e.level !== 0) // remove root node
           .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType))
           .sort((a, b) => (isBefore(parseISO(a.date), parseISO(b.date)) ? -1 : 1)),
       },
