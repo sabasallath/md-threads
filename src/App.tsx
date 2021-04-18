@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import NavigationDrawer from './components/common/NavigationDrawer/NavigationDrawer';
+import NavigationDrawer from './components/common/Drawer/NavigationDrawer/NavigationDrawer';
 import Constant from './config/constant';
 import { href } from './config/path';
 import HomePage from './pages/Home.page';

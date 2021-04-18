@@ -29,7 +29,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function ReplyDialog({ classes, node, flattenThread, user, token }: IProps) {
+function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
   const { handleClose } = useDialogBaseContext();
   const { rootNodeId } = useTopicContext();
   const { title, date, isPublic, markdown, author } = node;
@@ -41,7 +41,7 @@ function ReplyDialog({ classes, node, flattenThread, user, token }: IProps) {
   };
 
   const handleOnSendClick = (markdown: string) => {
-    const fromRootPathToNodeExcluded = flattenThread?.[node.id].fromRootPathToNodeIncluded;
+    const fromRootPathToNodeExcluded = flatMap?.[node.id].fromRootPathToNodeIncluded;
     if (fromRootPathToNodeExcluded) {
       mutate({
         fromRootPathToNodeExcluded: fromRootPathToNodeExcluded,
@@ -91,7 +91,7 @@ function ReplyDialog({ classes, node, flattenThread, user, token }: IProps) {
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
-  flattenThread: state.thread.flattenThread,
+  flatMap: state.thread.flatMap,
   token: state.user.token,
 });
 

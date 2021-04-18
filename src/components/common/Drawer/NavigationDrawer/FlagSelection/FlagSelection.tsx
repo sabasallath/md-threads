@@ -3,8 +3,8 @@ import { createStyles, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import FlagIcon from './FlagIcon';
 import { IconButton } from '@material-ui/core';
-import Constant from '../../../../config/constant';
 import { useTranslation } from 'react-i18next';
+import Constant from '../../../../../config/constant';
 
 type IProps = WithStyles<typeof styles>;
 

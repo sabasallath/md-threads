@@ -5,7 +5,7 @@ import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from '@m
 import DialogBase from '../components/common/helpers/DialogBase';
 import { RandomUtil } from '../utils/random.util';
 import { useDialogBaseContext } from '../store/contexts/DialogBase.context';
-import RightDrawer from '../components/common/NavigationDrawer/RightDrawer';
+import RightDrawer from '../components/common/Drawer/RightDrawer/RightDrawer';
 
 const DialogDemoContent: React.FunctionComponent = () => {
   const { handleClose } = useDialogBaseContext();

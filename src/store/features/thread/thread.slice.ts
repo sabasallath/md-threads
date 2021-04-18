@@ -1,14 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { ThreadFlatMap } from '../../../types/thread.type';
+import { ThreadFlatMap, ThreadType } from '../../../types/thread.type';
 import { ThreadUtil } from '../../../utils/thread.util';
 
 export interface ThreadSliceType {
   currentThread: string | null;
-  flattenThread: ThreadFlatMap | null;
+  flatMap: ThreadFlatMap | null;
+  flattenThread: ThreadType | null;
 }
 
 const initialState: ThreadSliceType = {
   currentThread: null,
+  flatMap: null,
   flattenThread: null,
 };
 
@@ -19,9 +21,9 @@ const threadSlice = createSlice({
     setOpenThread(state, action) {
       state.currentThread = action.payload;
     },
-    setFlattenThread(state, action) {
-      // todo loading status
-      state.flattenThread = ThreadUtil.flattenAndGroupById(action.payload);
+    setFlatMap(state, action) {
+      state.flatMap = ThreadUtil.flattenAndGroupById(action.payload);
+      state.flattenThread = ThreadUtil.rebuildThreadFromFlatMap(action.payload, state.flatMap);
     },
   },
 });

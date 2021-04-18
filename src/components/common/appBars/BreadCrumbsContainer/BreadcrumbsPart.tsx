@@ -4,6 +4,7 @@ import Link from '@material-ui/core/Link';
 import SubjectIcon from '@material-ui/icons/Subject';
 import { Typography } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 
 interface IProps extends WithStyles<typeof styles> {
   pathPart: string;
@@ -29,6 +30,7 @@ const styles = (theme: Theme) =>
 
 function BreadcrumbsPart(props: IProps) {
   const { classes, isActive, pathPart, index, handlePathPartClick } = props;
+  const isRoot = index === 0;
 
   function handleClick(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -38,7 +40,11 @@ function BreadcrumbsPart(props: IProps) {
   return (
     <Typography color={isActive ? 'textPrimary' : 'inherit'}>
       <Link onClick={handleClick} className={classes.link}>
-        <SubjectIcon className={classes.icon} />
+        {isRoot ? (
+          <MenuBookIcon className={classes.icon} />
+        ) : (
+          <SubjectIcon className={classes.icon} />
+        )}
         <span>{pathPart}</span>
       </Link>
     </Typography>
