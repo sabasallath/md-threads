@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core/styles';
+import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 
@@ -8,7 +8,7 @@ interface IProps extends WithStyles<typeof styles> {
   center?: boolean;
 }
 
-const styles = (theme: Theme) =>
+const styles = () =>
   createStyles({
     appBar: {
       overflowX: 'hidden',
@@ -25,9 +25,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function RightAppBar(props: IProps) {
-  const { classes, children, center } = props;
-
+function RightAppBar({ classes, children, center }: IProps) {
   return (
     <AppBar position="sticky" className={classes.appBar}>
       <Toolbar className={clsx(classes.toolBar)}>

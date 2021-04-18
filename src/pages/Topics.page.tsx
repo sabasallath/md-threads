@@ -106,6 +106,7 @@ function TopicsPage(props: IProps) {
     history.push('/topics/' + node.title.replaceAll(' ', '-'));
     setLoadingNode(node);
     setOpenThread(node.id);
+    window.scrollTo(0, 0);
   };
 
   const handlePathPartClick = (index: number) => {
@@ -114,6 +115,7 @@ function TopicsPage(props: IProps) {
     } else {
       setLoadingNode(undefined);
       setOpenThread(null);
+      window.scrollTo(0, 0);
     }
   };
 

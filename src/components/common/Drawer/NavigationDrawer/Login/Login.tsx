@@ -1,4 +1,4 @@
-import { Avatar, CircularProgress } from '@material-ui/core';
+import { Avatar, CircularProgress, Tooltip } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -47,17 +47,19 @@ function Login(props: IProps) {
   return (
     <ListItem button onClick={handleClickLogin}>
       <ListItemIcon>
-        <Avatar className={classes.avatar} color="primary">
-          {!isLoading || !userName ? (
-            userName ? (
-              UserUtil.formatAvatar(userName)
+        <Tooltip title={userName ? userName : ''}>
+          <Avatar className={classes.avatar} color="primary">
+            {!isLoading || !userName ? (
+              userName ? (
+                UserUtil.formatAvatar(userName)
+              ) : (
+                <PersonIcon />
+              )
             ) : (
-              <PersonIcon />
-            )
-          ) : (
-            <CircularProgress size={25} color="inherit" />
-          )}
-        </Avatar>
+              <CircularProgress size={25} color="inherit" />
+            )}
+          </Avatar>
+        </Tooltip>
       </ListItemIcon>
       <ListItemText primary={userName ? translate('Sign out') : translate('Sign in')} />
     </ListItem>
