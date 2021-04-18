@@ -3,7 +3,7 @@ import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Box, Slide, useScrollTrigger } from '@material-ui/core';
 import Topic from '../components/Topic/Topic';
-import RightDrawer from '../components/common/NavigationDrawer/RightDrawer';
+import RightDrawer from '../components/common/Drawer/RightDrawer/RightDrawer';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store/store';
 import { ThreadNodeType } from '../types/thread.type';
@@ -15,7 +15,8 @@ import { useHistory } from 'react-router-dom';
 import { useThreads } from '../api/api';
 import LoadingScreen from '../components/common/screen/LoadingScreen';
 import { useTranslate } from '../hooks/hooks';
-import { ThreadUtil } from '../utils/thread.util';
+import cloneDeep from 'lodash/cloneDeep';
+import { ScrollSpyContext, NewPageContextFactory } from '../store/contexts/ScrollSpyContext';
 
 interface HideOnScrollProps {
   children: React.ReactElement;
@@ -59,8 +60,8 @@ function TopicsPage(props: IProps) {
     classes,
     currentThread,
     setOpenThread,
+    setFlatMap,
     flattenThread,
-    setFlattenThread,
     searchBar,
     token,
     orderByDate,
@@ -97,9 +98,9 @@ function TopicsPage(props: IProps) {
 
   useEffect(() => {
     if (!isLoading && data) {
-      setFlattenThread(data);
+      setFlatMap(data);
     }
-  }, [data, isLoading, setFlattenThread]);
+  }, [data, isLoading, setFlatMap]);
 
   const handleOnOpenTopicClick = (node: ThreadNodeType) => {
     history.push('/topics/' + node.title.replaceAll(' ', '-'));
@@ -118,26 +119,28 @@ function TopicsPage(props: IProps) {
 
   return (
     <div className={classes.root}>
-      <Box p={4} flexGrow={1}>
-        <div className={clsx(classes.contentTop, { [classes.contentTopSearchBar]: searchBar })}>
-          <HideOnScroll>
-            <BreadcrumbsContainer
-              handlePathPartClick={handlePathPartClick}
-              path={breadCrumbDisplayPath}
+      <ScrollSpyContext.Provider value={NewPageContextFactory.build()}>
+        <Box p={4} flexGrow={1}>
+          <div className={clsx(classes.contentTop, { [classes.contentTopSearchBar]: searchBar })}>
+            <HideOnScroll>
+              <BreadcrumbsContainer
+                handlePathPartClick={handlePathPartClick}
+                path={breadCrumbDisplayPath}
+              />
+            </HideOnScroll>
+          </div>
+          {isLoading || !data || !flattenThread ? (
+            <LoadingScreen loadingNode={loadingNode} />
+          ) : (
+            <Topic
+              handleOnOpenTopicClick={handleOnOpenTopicClick}
+              key={data.root.id}
+              thread={!orderByDate ? data : cloneDeep(flattenThread)}
             />
-          </HideOnScroll>
-        </div>
-        {isLoading || !data || !flattenThread ? (
-          <LoadingScreen loadingNode={loadingNode} />
-        ) : (
-          <Topic
-            handleOnOpenTopicClick={handleOnOpenTopicClick}
-            key={data.root.id}
-            thread={!orderByDate ? data : ThreadUtil.rebuildThreadFromFlatMap(data, flattenThread)}
-          />
-        )}
-      </Box>
-      <RightDrawer />
+          )}
+        </Box>
+        <RightDrawer />
+      </ScrollSpyContext.Provider>
     </div>
   );
 }
@@ -145,6 +148,7 @@ function TopicsPage(props: IProps) {
 const mapStateToProps = (state: RootState) => ({
   searchBar: state.ui.searchBar,
   currentThread: state.thread.currentThread,
+  flatMap: state.thread.flatMap,
   flattenThread: state.thread.flattenThread,
   userName: state.user.userName,
   token: state.user.token,
@@ -153,7 +157,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const actionCreators = {
   setOpenThread: threadActions.setOpenThread,
-  setFlattenThread: threadActions.setFlattenThread,
+  setFlatMap: threadActions.setFlatMap,
 };
 
 const connector = connect(mapStateToProps, actionCreators);

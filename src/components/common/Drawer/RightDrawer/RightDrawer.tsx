@@ -8,16 +8,17 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { connect, ConnectedProps } from 'react-redux';
-import Constant from '../../../config/constant';
+import Constant from '../../../../config/constant';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { RootState } from '../../../store/store';
+import { RootState } from '../../../../store/store';
 import SearchIcon from '@material-ui/icons/Search';
 import { FormGroup, IconButton, Switch } from '@material-ui/core';
-import { uiActions } from '../../../store/features/ui/ui.slice';
-import { useTranslate } from '../../../hooks/hooks';
+import { uiActions } from '../../../../store/features/ui/ui.slice';
+import { useTranslate } from '../../../../hooks/hooks';
 import SortIcon from '@material-ui/icons/Sort';
+import CustomizedTreeView from './CustomizedTreeView/CustomizedTreeView';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -113,9 +114,7 @@ function RightDrawer(props: IProps) {
     >
       {searchBar ? <div className={classes.toolbar} /> : null}
 
-      <div style={{ flexGrow: 1 }}>
-        {expandedRightDrawer ? <span>Right drawer content</span> : ''}
-      </div>
+      <div style={{ flexGrow: 1 }}>{expandedRightDrawer ? <CustomizedTreeView /> : undefined}</div>
       <div className={classes.drawerContent}>
         <Divider />
         <FormGroup>

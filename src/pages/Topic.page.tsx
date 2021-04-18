@@ -4,7 +4,6 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { Box } from '@material-ui/core';
 import Topic from '../components/Topic/Topic';
 import { RandomUtil } from '../utils/random.util';
-import RightDrawer from '../components/common/NavigationDrawer/RightDrawer';
 import { ThreadNodeType } from '../types/thread.type';
 
 type IProps = WithStyles<typeof styles>;
@@ -28,7 +27,6 @@ function TopicPage(props: IProps) {
       <Box p={4}>
         <Topic handleOnOpenTopicClick={handleOnOpenTopicClick} thread={thread} />
       </Box>
-      <RightDrawer />
     </div>
   );
 }

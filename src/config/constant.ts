@@ -28,4 +28,12 @@ export default class Constant {
   // Date format
   static readonly DATE_DISPLAY_FORMAT = 'dd/MM/yyyy - HH:mm';
   static readonly INVALID_DATE_FORMAT_MESSAGE = 'Invalid date format';
+
+  // Scroll spy
+  static readonly SCROLL_SPY_AUDIT_TIME = 375;
+  static readonly SCROLL_DURATION = 375;
+  static readonly SCROLL_DELAY = 175;
+  static readonly SCROLL_ANIMATION_PAUSE_DURATION =
+    Constant.SCROLL_DURATION + Constant.SCROLL_DELAY + Constant.SCROLL_SPY_AUDIT_TIME;
+  static SCROLLER_OFFSET: 50;
 }

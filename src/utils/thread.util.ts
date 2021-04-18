@@ -192,12 +192,12 @@ export class ThreadUtil {
   static sortByDate(unsortedNodes: ThreadNodeType[]): ThreadNodeType[] {
     return unsortedNodes.sort(this.compareNodeByDate());
   }
-  static rebuildThreadFromFlatMap(data: ThreadType, flattenThread: ThreadFlatMap): ThreadType {
+  static rebuildThreadFromFlatMap(data: ThreadType, flatMap: ThreadFlatMap): ThreadType {
     return {
       ...data,
       root: {
         ...data.root,
-        descendant: Object.values(flattenThread)
+        descendant: Object.values(flatMap)
           .filter((e) => e.level !== 0) // remove root node
           .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType)),
       },

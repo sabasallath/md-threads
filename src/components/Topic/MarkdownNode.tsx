@@ -28,6 +28,9 @@ import LockIcon from '@material-ui/icons/Lock';
 import UserUtil from '../../utils/user.util';
 import { useTranslate } from '../../hooks/hooks';
 import { ThreadUtil } from '../../utils/thread.util';
+import { Waypoint } from 'react-waypoint';
+import { Element } from 'react-scroll';
+import { useScrollSpy } from '../../store/contexts/ScrollSpyContext';
 
 interface ThreadNodeTypeWithLevel {
   level: number;
@@ -69,6 +72,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
   const translate = useTranslate();
   const { handleOnReplyClick, handleOnOpenTopicClick } = useTopicContext();
   const replyOrOpenDisabled = !isPublic && !user.token.access_token && (!level || !isAbstract);
+  const { spy } = useScrollSpy();
 
   const MarkdownNodeAvatar = (
     <Avatar aria-label="avatar" className={classes.avatar}>
@@ -123,7 +127,15 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
     return !isPublic ? `(${translate('private')}) ${formattedTitle}` : formattedTitle;
   }
 
-  const MarkdownNodeTitle = <Typography variant={!level ? 'h5' : 'body1'}>{getTitle()}</Typography>;
+  const MarkdownNodeTitle = (
+    <Waypoint topOffset={'15%'} bottomOffset={'65%'} onEnter={() => spy.subject.next(node.id)}>
+      <div>
+        <Element key={node.id} name={node.id}>
+          <Typography variant={!level ? 'h5' : 'body1'}>{getTitle()}</Typography>
+        </Element>
+      </div>
+    </Waypoint>
+  );
 
   const MarkdownNodeSubHeader = (
     <>
