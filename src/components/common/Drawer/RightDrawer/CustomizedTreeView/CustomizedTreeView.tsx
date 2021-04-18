@@ -57,16 +57,21 @@ const StyledTreeItem = withStyles((theme: Theme) =>
   })
 )((props: TreeItemProps) => <TreeItem {...props} TransitionComponent={TransitionComponent} />);
 
-const useStyles = makeStyles(
+const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       flexGrow: 1,
       maxWidth: '100%',
       overflowX: 'hidden',
-      minHeight: 'calc(100% - 70px * 3)', // todo No HARDCODED SIZE
-      maxHeight: 'calc(100% - 70px * 3)', // todo No HARDCODED SIZE
       paddingLeft: 7,
       marginLeft: 4,
+    },
+    // todo fix hardcoded value
+    withSearchHeight: {
+      maxHeight: 'calc(100vh - 176px - 64px)',
+    },
+    withoutSearchHeight: {
+      maxHeight: 'calc(100vh - 176px)',
     },
     hidden: {
       visibility: 'hidden',
@@ -160,9 +165,7 @@ function CustomizedTreeView(props: IProps) {
         duration: Constant.SCROLL_DURATION,
         delay: Constant.SCROLL_DELAY,
         smooth: true,
-        offset: searchBar
-          ? -Constant.APP_BAR_MUI_SM_BREAKPOINT_HEIGHT - Constant.SCROLLER_OFFSET
-          : -Constant.SCROLLER_OFFSET,
+        offset: searchBar ? -50 - 64 : -50, // todo fix hardcoded value
       });
       setSelected(nodeId);
       if (flatMap) {
@@ -184,7 +187,7 @@ function CustomizedTreeView(props: IProps) {
         }}
         key={node.id}
         nodeId={node.id}
-        label={node.isPublic || token?.access_token ? node.title : `(${translate('private')})`}
+        label={node.title ? node.title : `(${translate('private')})`}
       >
         {node.descendant &&
           ThreadUtil.sortByDate(node.descendant).map((node) => {
@@ -196,7 +199,11 @@ function CustomizedTreeView(props: IProps) {
 
   return (
     <TreeView
-      className={clsx(classes.root, { [classes.hidden]: !expandedRightDrawer })}
+      className={clsx(classes.root, {
+        [classes.hidden]: !expandedRightDrawer,
+        [classes.withSearchHeight]: !!searchBar,
+        [classes.withoutSearchHeight]: !searchBar,
+      })}
       classes={{
         root: isLoading ? classes.loadingTree : undefined,
       }}

@@ -35,5 +35,4 @@ export default class Constant {
   static readonly SCROLL_DELAY = 175;
   static readonly SCROLL_ANIMATION_PAUSE_DURATION =
     Constant.SCROLL_DURATION + Constant.SCROLL_DELAY + Constant.SCROLL_SPY_AUDIT_TIME;
-  static SCROLLER_OFFSET: 50;
 }
