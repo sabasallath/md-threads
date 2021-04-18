@@ -18,7 +18,7 @@ interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
 const styles = () => createStyles({});
 
 function LoadingScreen(props: IProps) {
-  const { loadingNode, token } = props;
+  const { loadingNode, token, orderByDate } = props;
 
   if (loadingNode) {
     let thread = RandomUtil.genThread(2, 3, 5, true, true);
@@ -30,6 +30,10 @@ function LoadingScreen(props: IProps) {
 
     if (!token.access_token) {
       thread = ThreadUtil.privatize(thread);
+    }
+
+    if (orderByDate) {
+      thread = ThreadUtil.rebuildThreadFromFlatMap(thread, ThreadUtil.flattenAndGroupById(thread));
     }
 
     return (
@@ -53,6 +57,7 @@ function LoadingScreen(props: IProps) {
 
 const mapStateToProps = (state: RootState) => ({
   token: state.user.token,
+  orderByDate: state.ui.orderByDate,
 });
 
 const connector = connect(mapStateToProps);

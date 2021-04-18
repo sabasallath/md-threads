@@ -185,15 +185,21 @@ export class ThreadUtil {
     return null;
   }
 
-  static buildOrderedByDateThread(data: ThreadType, flattenThread: ThreadFlatMap): ThreadType {
+  static compareNodeByDate(): (a: ThreadNodeType, b: ThreadNodeType) => number {
+    return (a, b) => (isBefore(parseISO(a.date), parseISO(b.date)) ? -1 : 1);
+  }
+
+  static sortByDate(unsortedNodes: ThreadNodeType[]): ThreadNodeType[] {
+    return unsortedNodes.sort(this.compareNodeByDate());
+  }
+  static rebuildThreadFromFlatMap(data: ThreadType, flattenThread: ThreadFlatMap): ThreadType {
     return {
       ...data,
       root: {
         ...data.root,
         descendant: Object.values(flattenThread)
           .filter((e) => e.level !== 0) // remove root node
-          .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType))
-          .sort((a, b) => (isBefore(parseISO(a.date), parseISO(b.date)) ? -1 : 1)),
+          .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType)),
       },
     };
   }

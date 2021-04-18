@@ -133,7 +133,7 @@ function TopicsPage(props: IProps) {
           <Topic
             handleOnOpenTopicClick={handleOnOpenTopicClick}
             key={data.root.id}
-            thread={!orderByDate ? data : ThreadUtil.buildOrderedByDateThread(data, flattenThread)}
+            thread={!orderByDate ? data : ThreadUtil.rebuildThreadFromFlatMap(data, flattenThread)}
           />
         )}
       </Box>
