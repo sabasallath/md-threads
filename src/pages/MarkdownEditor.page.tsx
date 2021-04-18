@@ -13,8 +13,8 @@ function MarkdownEditorPage(props: IProps) {
     console.log('handleOnCancelClick');
   };
 
-  const handleOnSendClick = (markdown: string) => {
-    console.log('handleOnSendClick', { markdown });
+  const handleOnSendClick = (markdown: string, isPublic: boolean) => {
+    return;
   };
 
   return (

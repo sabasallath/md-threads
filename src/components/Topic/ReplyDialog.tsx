@@ -40,14 +40,14 @@ function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
     handleClose();
   };
 
-  const handleOnSendClick = (markdown: string) => {
+  const handleOnSendClick = (markdown: string, isPublic: boolean) => {
     const fromRootPathToNodeExcluded = flatMap?.[node.id].fromRootPathToNodeIncluded;
     if (fromRootPathToNodeExcluded) {
       mutate({
         fromRootPathToNodeExcluded: fromRootPathToNodeExcluded,
         title: 'Re: ' + node.title,
         markdown: markdown,
-        isPublic: true,
+        isPublic: isPublic,
         author: user?.userName ? user.userName : '',
       });
     }
