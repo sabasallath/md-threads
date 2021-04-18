@@ -47,13 +47,12 @@ axiosMock.onPost(/threads/).reply((config) => {
   const fromRootPathToNodeExcluded = data?.fromRootPathToNodeExcluded;
   const threadId = data?.fromRootPathToNodeExcluded?.[0];
   const thread = MockData.threads.find((e) => e.root.id === threadId);
-  if (thread && fromRootPathToNodeExcluded !== undefined) {
-    const success = ThreadUtil.insertNodeInThread(fromRootPathToNodeExcluded, thread, node);
-    if (success) {
-      return [201];
-    }
-  } else {
-    // todo create thread
+  if (
+    thread &&
+    fromRootPathToNodeExcluded !== undefined &&
+    ThreadUtil.insertNodeInThread(fromRootPathToNodeExcluded, thread, node)
+  ) {
+    return [201];
   }
   return [400];
 });

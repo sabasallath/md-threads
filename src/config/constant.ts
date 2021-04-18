@@ -7,6 +7,7 @@ export default class Constant {
   static readonly NAVIGATION_DRAWER_START_EXPANDED = true;
   static readonly RIGHT_DRAWER_START_EXPANDED = true;
   static readonly SEARCH_BAR_START_VISIBLE = true;
+  static readonly ORDER_BY_DATE_START_SET = false;
   static readonly NAVIGATION_DRAWER_WIDTH = 300;
   static readonly NAVIGATION_DRAWER_REDUCED_WIDTH = 56;
   static readonly RIGHT_DRAWER_WIDTH = 350;

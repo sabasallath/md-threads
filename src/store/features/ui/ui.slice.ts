@@ -6,6 +6,7 @@ const initialState = {
   expandedNavigationDrawer: Constant.NAVIGATION_DRAWER_START_EXPANDED,
   expandedRightDrawer: Constant.RIGHT_DRAWER_START_EXPANDED,
   searchBar: Constant.SEARCH_BAR_START_VISIBLE,
+  orderByDate: Constant.ORDER_BY_DATE_START_SET,
   couldNotSendReplyError: null,
 };
 
@@ -24,6 +25,9 @@ const uiSlice = createSlice({
     },
     setSearchBar(state, action) {
       state.searchBar = action.payload;
+    },
+    setOrderByDate(state, action) {
+      state.orderByDate = action.payload;
     },
     setCouldNotSendReplyError(state, action) {
       state.couldNotSendReplyError = action.payload;

@@ -17,6 +17,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { FormGroup, IconButton, Switch } from '@material-ui/core';
 import { uiActions } from '../../../store/features/ui/ui.slice';
 import { useTranslate } from '../../../hooks/hooks';
+import SortIcon from '@material-ui/icons/Sort';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
@@ -60,18 +61,33 @@ const styles = (theme: Theme) =>
   });
 
 function RightDrawer(props: IProps) {
-  const { classes, expandedRightDrawer, setExpandedRightDrawer, setSearchBar, searchBar } = props;
+  const {
+    classes,
+    expandedRightDrawer,
+    setExpandedRightDrawer,
+    setSearchBar,
+    searchBar,
+    setOrderByDate,
+    orderByDate,
+  } = props;
   const translate = useTranslate();
 
   const [state, setState] = React.useState({
     search: searchBar,
+    orderByDate: orderByDate,
   });
 
-  const navigationItems = [{ name: 'Search bar', icon: <SearchIcon />, switchName: 'search' }];
+  const navigationItems = [
+    { name: 'Search bar', icon: <SearchIcon />, switchName: 'search' },
+    { name: 'Order by date', icon: <SortIcon />, switchName: 'orderByDate' },
+  ];
 
   const handleChange = (name: string) => {
     if (name === 'search') {
       setSearchBar(!searchBar);
+    }
+    if (name === 'orderByDate') {
+      setOrderByDate(!orderByDate);
     }
     setState({ ...state, [name]: !state[name] });
   };
@@ -143,11 +159,13 @@ function RightDrawer(props: IProps) {
 const mapStateToProps = (state: RootState) => ({
   expandedRightDrawer: state.ui.expandedRightDrawer,
   searchBar: state.ui.searchBar,
+  orderByDate: state.ui.orderByDate,
 });
 
 const actionCreators = {
   setExpandedRightDrawer: uiActions.setExpandedRightDrawer,
   setSearchBar: uiActions.setSearchBar,
+  setOrderByDate: uiActions.setOrderByDate,
 };
 
 const connector = connect(mapStateToProps, actionCreators);
