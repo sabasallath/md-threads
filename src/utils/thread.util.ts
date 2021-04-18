@@ -15,6 +15,7 @@ import union from 'lodash/union';
 import groupBy from 'lodash/groupBy';
 import clone from 'lodash/clone';
 import { v4 as uuidv4 } from 'uuid';
+import { isBefore, parseISO } from 'date-fns';
 
 export class ThreadUtil {
   static buildNode(partialNode: Partial<ThreadNodeType>): ThreadNodeType {
@@ -182,5 +183,24 @@ export class ThreadUtil {
     }
 
     return null;
+  }
+
+  static compareNodeByDate(): (a: ThreadNodeType, b: ThreadNodeType) => number {
+    return (a, b) => (isBefore(parseISO(a.date), parseISO(b.date)) ? -1 : 1);
+  }
+
+  static sortByDate(unsortedNodes: ThreadNodeType[]): ThreadNodeType[] {
+    return unsortedNodes.sort(this.compareNodeByDate());
+  }
+  static rebuildThreadFromFlatMap(data: ThreadType, flattenThread: ThreadFlatMap): ThreadType {
+    return {
+      ...data,
+      root: {
+        ...data.root,
+        descendant: Object.values(flattenThread)
+          .filter((e) => e.level !== 0) // remove root node
+          .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType)),
+      },
+    };
   }
 }

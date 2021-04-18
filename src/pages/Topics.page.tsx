@@ -15,6 +15,7 @@ import { useHistory } from 'react-router-dom';
 import { useThreads } from '../api/api';
 import LoadingScreen from '../components/common/screen/LoadingScreen';
 import { useTranslate } from '../hooks/hooks';
+import { ThreadUtil } from '../utils/thread.util';
 
 interface HideOnScrollProps {
   children: React.ReactElement;
@@ -54,7 +55,16 @@ const styles = (theme: Theme) =>
   });
 
 function TopicsPage(props: IProps) {
-  const { classes, currentThread, setOpenThread, setFlattenThread, searchBar, token } = props;
+  const {
+    classes,
+    currentThread,
+    setOpenThread,
+    flattenThread,
+    setFlattenThread,
+    searchBar,
+    token,
+    orderByDate,
+  } = props;
   const translate = useTranslate();
   const rootPath = translate('Topics');
   const history = useHistory();
@@ -117,10 +127,14 @@ function TopicsPage(props: IProps) {
             />
           </HideOnScroll>
         </div>
-        {isLoading || !data ? (
+        {isLoading || !data || !flattenThread ? (
           <LoadingScreen loadingNode={loadingNode} />
         ) : (
-          <Topic handleOnOpenTopicClick={handleOnOpenTopicClick} key={data.root.id} thread={data} />
+          <Topic
+            handleOnOpenTopicClick={handleOnOpenTopicClick}
+            key={data.root.id}
+            thread={!orderByDate ? data : ThreadUtil.rebuildThreadFromFlatMap(data, flattenThread)}
+          />
         )}
       </Box>
       <RightDrawer />
@@ -131,8 +145,10 @@ function TopicsPage(props: IProps) {
 const mapStateToProps = (state: RootState) => ({
   searchBar: state.ui.searchBar,
   currentThread: state.thread.currentThread,
+  flattenThread: state.thread.flattenThread,
   userName: state.user.userName,
   token: state.user.token,
+  orderByDate: state.ui.orderByDate,
 });
 
 const actionCreators = {

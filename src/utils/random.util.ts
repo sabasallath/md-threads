@@ -2,6 +2,7 @@ import range from 'lodash/range';
 import chance from '../config/chance';
 import { ThreadNodeBase, ThreadNodeType, ThreadType } from '../types/thread.type';
 import { v4 as uuidv4 } from 'uuid';
+import { parseISO } from 'date-fns';
 
 export class RandomUtil {
   static lorem(p: number): string[] {
@@ -16,12 +17,28 @@ export class RandomUtil {
     return RandomUtil.lorem(chance.integer({ min, max })).join('\n\n\n');
   }
 
-  private static genThreadNodeBase(parentIsPublic = false): ThreadNodeBase {
+  static genDateAfterParentBeforeNow(parentMaxIsoDate: string): string {
+    return (chance.date({
+      min: parseISO(parentMaxIsoDate),
+      max: new Date(),
+    }) as Date).toISOString();
+  }
+
+  private static rootNodeStartDate() {
+    return (chance.date({ min: new Date(0), max: new Date() }) as Date).toISOString();
+  }
+
+  private static genThreadNodeBase(
+    parentIsPublic = false,
+    parentMaxIsoDate?: string
+  ): ThreadNodeBase {
     return {
       id: uuidv4(),
       title: chance.company(),
       author: chance.name(),
-      date: chance.date().toISOString(),
+      date: parentMaxIsoDate
+        ? this.genDateAfterParentBeforeNow(parentMaxIsoDate)
+        : chance.date().toISOString(),
       isPublic: parentIsPublic ? chance.bool({ likelihood: 60 }) : parentIsPublic,
       markdown: this.genMarkdown(),
       isAbstract: false,
@@ -79,11 +96,12 @@ export class RandomUtil {
     minDescendant: number,
     maxDescendant: number,
     convergeFaster: boolean,
-    parentIsPublic: boolean
+    parentIsPublic: boolean,
+    parentIsoDate?: string
   ): ThreadNodeType[] {
     return maxLevel > 0
       ? range(chance.integer({ min: minDescendant, max: maxDescendant })).map(() => {
-          const nodeBase = this.genThreadNodeBase(parentIsPublic);
+          const nodeBase = this.genThreadNodeBase(parentIsPublic, parentIsoDate);
           return {
             ...nodeBase,
             descendant: chance.bool({ likelihood: convergeFaster ? 50 : 100 })
@@ -92,7 +110,8 @@ export class RandomUtil {
                   minDescendant,
                   maxDescendant,
                   convergeFaster,
-                  nodeBase.isPublic
+                  nodeBase.isPublic,
+                  nodeBase.date
                 )
               : [],
           };
@@ -108,6 +127,7 @@ export class RandomUtil {
     forcePrivate = false
   ): ThreadNodeType {
     const nodeBase = this.genThreadNodeBase(chance.bool({ likelihood: forcePrivate ? 0 : 80 }));
+    nodeBase.date = this.rootNodeStartDate();
     return {
       ...nodeBase,
       descendant:
@@ -117,7 +137,8 @@ export class RandomUtil {
               minDescendant,
               maxDescendant,
               convergeFaster,
-              nodeBase.isPublic
+              nodeBase.isPublic,
+              nodeBase.date
             )
           : [],
     };

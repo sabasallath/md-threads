@@ -27,6 +27,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import LockIcon from '@material-ui/icons/Lock';
 import UserUtil from '../../utils/user.util';
 import { useTranslate } from '../../hooks/hooks';
+import { ThreadUtil } from '../../utils/thread.util';
 
 interface ThreadNodeTypeWithLevel {
   level: number;
@@ -153,7 +154,7 @@ const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) =
         </CardContent>
 
         <div className={clsx({ [classes.loadingBlur]: loading && !level })}>
-          {descendant.map((e) => {
+          {ThreadUtil.sortByDate(descendant).map((e) => {
             return (
               <MarkdownNode
                 loading={loading !== undefined && loading}
