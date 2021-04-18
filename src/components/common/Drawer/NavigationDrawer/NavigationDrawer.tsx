@@ -7,16 +7,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  Settings,
-  NotListedLocation,
-  Widgets,
-  Edit,
-  Chat,
-} from '@material-ui/icons';
+import { ChevronLeft, ChevronRight, Home, Settings, Chat } from '@material-ui/icons';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import clsx from 'clsx';
@@ -110,11 +101,7 @@ function NavigationDrawer(props: IProps) {
 
   const navigationItems = [
     { name: 'Home', icon: <Home />, to: '/' },
-    { name: 'Demo', icon: <Widgets />, to: '/demo' },
-    { name: 'Markdown Editor', icon: <Edit />, to: '/md-editor' },
-    { name: 'Topic', icon: <Chat />, to: '/topic' },
     { name: 'Topics', icon: <Chat />, to: '/topics' },
-    { name: '404 Page', icon: <NotListedLocation />, to: '/404' },
   ];
 
   const handleDrawerOpen = () => {
