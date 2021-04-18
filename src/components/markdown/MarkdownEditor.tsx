@@ -9,7 +9,9 @@ import {
   Fade,
   Grid,
   IconButton,
+  Switch,
   Toolbar,
+  Tooltip,
 } from '@material-ui/core';
 import { SubjectUtil, SubObs } from '../../utils/subject.util';
 import { auditTime, distinctUntilChanged } from 'rxjs/operators';
@@ -18,17 +20,22 @@ import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import LockIcon from '@material-ui/icons/Lock';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import ReactMarkdown from 'react-markdown';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Typography from '@material-ui/core/Typography';
 import Constant from '../../config/constant';
 import clsx from 'clsx';
 import { useTranslate } from '../../hooks/hooks';
+import { RootState } from '../../store/store';
+import { connect, ConnectedProps } from 'react-redux';
 
-interface IProps extends WithStyles<typeof styles> {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
   defaultValue?: string;
   handleOnCancelClick: () => void;
-  handleOnSendClick: (markdown: string) => void;
+  handleOnSendClick: (markdown: string, isPublic: boolean) => void;
   isLoading?: boolean;
 }
 
@@ -50,7 +57,7 @@ const styles = (theme: Theme) => {
     appBarPreview: {
       backgroundColor: theme.palette.secondary.dark,
     },
-    editorButton: {
+    buttonPadding: {
       marginRight: theme.spacing(2),
     },
     zonePreview: {
@@ -75,12 +82,20 @@ const styles = (theme: Theme) => {
     },
     cardActions: {
       display: 'flex',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
       marginTop: theme.spacing(1),
+    },
+    cardActionsZone: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     button: {
       minWidth: '100px',
       minHeight: 42,
+    },
+    isDisabledIcon: {
+      color: theme.palette.action.disabled,
     },
   });
 };
@@ -112,13 +127,14 @@ function useAuditedMarkdownStream(
 }
 
 function MarkdownEditor(props: IProps) {
-  const { classes, defaultValue, handleOnCancelClick, handleOnSendClick, isLoading } = props;
+  const { classes, defaultValue, handleOnCancelClick, handleOnSendClick, isLoading, token } = props;
   const [markdown, setMarkdown] = React.useState(defaultValue ? defaultValue : '');
   const [preview, setPreview] = React.useState(true);
   const [previewExited, setPreviewExited] = React.useState(true);
   const [edit, setEdit] = React.useState(true);
   const [editExited, setEditExited] = React.useState(true);
   const markdownStreamSubject = useAuditedMarkdownStream(setMarkdown);
+  const [isPrivate, setIsPrivate] = React.useState(false);
   const translate = useTranslate();
 
   const handleOnChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -131,11 +147,10 @@ function MarkdownEditor(props: IProps) {
    * (An alternative need to be set up if the delay is big enough)
    */
   function delayHandleOnSendClick() {
-    // todo prevent second click
     return () =>
       setTimeout(() => {
         if (!isLoading) {
-          handleOnSendClick(markdown);
+          handleOnSendClick(markdown, !isPrivate);
         }
       }, Constant.MARKDOWN_EDITOR_AUDIT_TIME);
   }
@@ -156,6 +171,10 @@ function MarkdownEditor(props: IProps) {
     }
   };
 
+  const handleIsPublicChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPrivate(event.target.checked);
+  };
+
   return (
     <div className={classes.root}>
       <Card elevation={0}>
@@ -168,7 +187,7 @@ function MarkdownEditor(props: IProps) {
             >
               <Toolbar variant="dense">
                 <IconButton
-                  className={classes.editorButton}
+                  className={classes.buttonPadding}
                   onClick={handleEditButtonClick}
                   size="small"
                   color="inherit"
@@ -187,7 +206,7 @@ function MarkdownEditor(props: IProps) {
             >
               <Toolbar variant="dense">
                 <IconButton
-                  className={classes.editorButton}
+                  className={classes.buttonPadding}
                   onClick={handlePreviewButtonClick}
                   size="small"
                   color="inherit"
@@ -230,30 +249,55 @@ function MarkdownEditor(props: IProps) {
           </Fade>
         </Grid>
         <CardActions className={classes.cardActions}>
-          <Button
-            className={classes.button}
-            disabled={isLoading}
-            onClick={handleOnCancelClick}
-            variant="outlined"
-            color="primary"
-            aria-label="cancel"
-          >
-            {translate('Cancel')}
-          </Button>
-          <Button
-            className={classes.button}
-            disabled={isLoading}
-            onClick={delayHandleOnSendClick()}
-            variant="contained"
-            color="primary"
-            aria-label="send"
-          >
-            {!isLoading ? translate('Send') : <CircularProgress size={25} color="inherit" />}
-          </Button>
+          <div className={classes.cardActionsZone}>
+            <LockOpenIcon className={clsx({ [classes.isDisabledIcon]: isPrivate })} />
+            <Tooltip
+              title={!token?.access_token ? translate('Please log in to send private message') : ''}
+            >
+              <div>
+                <Switch
+                  disabled={!token.access_token}
+                  checked={isPrivate}
+                  color="primary"
+                  onChange={handleIsPublicChange}
+                  name="isPublic"
+                  inputProps={{ 'aria-label': 'is public' }}
+                />
+              </div>
+            </Tooltip>
+
+            <LockIcon className={clsx({ [classes.isDisabledIcon]: !isPrivate })} />
+          </div>
+          <div className={classes.cardActionsZone}>
+            <Button
+              className={clsx(classes.button, classes.buttonPadding)}
+              disabled={isLoading}
+              onClick={handleOnCancelClick}
+              variant="outlined"
+              color="primary"
+              aria-label="cancel"
+            >
+              {translate('Cancel')}
+            </Button>
+            <Button
+              className={classes.button}
+              disabled={isLoading || !markdown}
+              onClick={delayHandleOnSendClick()}
+              variant="contained"
+              color="primary"
+              aria-label="send"
+            >
+              {!isLoading ? translate('Send') : <CircularProgress size={25} color="inherit" />}
+            </Button>
+          </div>
         </CardActions>
       </Card>
     </div>
   );
 }
 
-export default withStyles(styles)(MarkdownEditor);
+const mapStateToProps = (state: RootState) => ({
+  token: state.user.token,
+});
+const connector = connect(mapStateToProps);
+export default connector(withStyles(styles)(MarkdownEditor));
