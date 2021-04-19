@@ -94,7 +94,6 @@ function SearchBar(props: IProps) {
               .filter((e) => e.level !== 0)
               .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType))
           )
-            .map((flatNode) => ({ ...flatNode, descendant: [] } as ThreadNodeType))
             .filter((e) => e.isPublic || token?.access_token)
             .map((e) => ({
               group:
@@ -147,6 +146,7 @@ function SearchBar(props: IProps) {
               id="search"
               ListboxProps={{ style: { maxHeight: 400 } }}
               onChange={handleOnChange}
+              onSubmit={(event) => event.preventDefault()}
               options={options.sort((a, b) => -b.group.localeCompare(a.group))}
               getOptionSelected={(option, value) => option.value === value.value}
               groupBy={(option) => option.group}

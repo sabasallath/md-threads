@@ -36,7 +36,7 @@ function Topic({ thread, handleOnOpenTopicClick, loading }: IProps) {
         }}
       >
         <MarkdownNode loading={loading !== undefined && loading} level={0} node={thread.root} />
-        <DialogBase fullWidth open={open} handleClose={handleClose} handleOpen={handleOpen}>
+        <DialogBase open={open} handleClose={handleClose} handleOpen={handleOpen}>
           <ReplyDialog node={node} />
         </DialogBase>
       </TopicContext.Provider>

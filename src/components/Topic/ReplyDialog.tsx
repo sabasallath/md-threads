@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
 import { ThreadNodeType } from '../../types/thread.type';
 import { useDialogBaseContext } from '../../store/contexts/DialogBase.context';
-import { DialogContent, DialogTitle, Grid } from '@material-ui/core';
+import { DialogContent, DialogTitle, Grid, useMediaQuery } from '@material-ui/core';
 import ReactMarkdown from 'react-markdown';
 import MarkdownEditor from '../markdown/MarkdownEditor';
 import Typography from '@material-ui/core/Typography';
@@ -13,6 +13,7 @@ import { useReply } from '../../api/api';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../store/store';
 import { useTopicContext } from '../../store/contexts/Topic.context';
+import clsx from 'clsx';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
@@ -23,6 +24,9 @@ const styles = (theme: Theme) =>
     previousMessage: {
       maxHeight: '160px',
       overflowY: 'auto',
+    },
+    hidePreviousMessage: {
+      display: 'none',
     },
     date: {
       color: theme.palette.text.hint,
@@ -35,6 +39,7 @@ function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
   const { title, date, isPublic, markdown, author } = node;
   const translate = useTranslate();
   const { mutate, isLoading } = useReply(node.id, rootNodeId, token);
+  const isMatchMedium = useMediaQuery<Theme>(`(max-height:${600}px)`);
 
   const handleOnCancelClick = () => {
     handleClose();
@@ -68,7 +73,11 @@ function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
             <Typography className={classes.date} variant="body2">
               {DateUtil.formatDateForDisplay(date)}
             </Typography>
-            <div className={classes.previousMessage}>
+            <div
+              className={clsx(classes.previousMessage, {
+                [classes.hidePreviousMessage]: isMatchMedium,
+              })}
+            >
               <ReactMarkdown>{markdown}</ReactMarkdown>
             </div>
           </Grid>
