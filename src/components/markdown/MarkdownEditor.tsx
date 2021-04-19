@@ -114,7 +114,7 @@ function useAuditedMarkdownStream(
   useEffect(() => {
     const stream = SubjectUtil.subjectObs<string>();
     const auditedStream: Observable<string> = stream.obs$.pipe(
-      auditTime(Constant.MARKDOWN_EDITOR_AUDIT_TIME * 2),
+      auditTime(Constant.MARKDOWN_EDITOR_AUDIT_TIME),
       distinctUntilChanged((prev, curr) => prev === curr)
     );
     const subs = [stream.subject?.subscribe(), auditedStream?.subscribe(setMarkdown)];
@@ -225,7 +225,7 @@ function MarkdownEditor(props: IProps) {
             unmountOnExit
             mountOnEnter
           >
-            <Grid item xs={previewExited ? 12 : 6}>
+            <Grid item xs={12} md={previewExited ? 12 : 6}>
               <textarea
                 className={clsx(classes.area, classes.textArea)}
                 defaultValue={markdown}
@@ -241,7 +241,7 @@ function MarkdownEditor(props: IProps) {
             unmountOnExit
             mountOnEnter
           >
-            <Grid className={classes.zonePreview} item xs={editExited ? 12 : 6}>
+            <Grid className={classes.zonePreview} item xs={12} md={editExited ? 12 : 6}>
               <div className={clsx(classes.area, classes.previewArea)}>
                 <ReactMarkdown>{markdown}</ReactMarkdown>
               </div>

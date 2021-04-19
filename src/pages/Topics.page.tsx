@@ -11,12 +11,11 @@ import { threadActions } from '../store/features/thread/thread.slice';
 import BreadcrumbsContainer from '../components/common/appBars/BreadCrumbsContainer/BreadcrumbsContainer';
 import clsx from 'clsx';
 import Constant from '../config/constant';
-import { useHistory } from 'react-router-dom';
 import { useThreads } from '../api/api';
 import LoadingScreen from '../components/common/screen/LoadingScreen';
 import { useTranslate } from '../hooks/hooks';
 import cloneDeep from 'lodash/cloneDeep';
-import { ScrollSpyContext, NewPageContextFactory } from '../store/contexts/ScrollSpyContext';
+import { ScrollSpyContext, ScrollSpyContextFactory } from '../store/contexts/ScrollSpyContext';
 
 interface HideOnScrollProps {
   children: React.ReactElement;
@@ -68,7 +67,6 @@ function TopicsPage(props: IProps) {
   } = props;
   const translate = useTranslate();
   const rootPath = translate('Topics');
-  const history = useHistory();
   const { data, isLoading } = useThreads(currentThread, token);
   const [loadingNode, setLoadingNode] = useState<ThreadNodeType | undefined>(undefined);
   const breadCrumbDisplayPath =
@@ -79,31 +77,12 @@ function TopicsPage(props: IProps) {
       : [rootPath, data.root.title];
 
   useEffect(() => {
-    const userRefreshOnSubtopicPage =
-      data?.root.isAbstract && history.location.pathname !== '/topics';
-    const subTopicOutOfSyncWithUrl =
-      !data?.root.isAbstract && history.location.pathname === '/topics';
-
-    if (userRefreshOnSubtopicPage) {
-      // If user refresh page on subtopic we redirect to main topic page
-      // since their is currently no way to retrieve the node id from url
-      history.push('/topics');
-    } else if (subTopicOutOfSyncWithUrl && data) {
-      // If user open a subtopic
-      // go to another page and come back to the subtopic page
-      // url needs to be set in sync with current subtopic
-      history.push('/topics/' + data.root.title.replaceAll(' ', '-'));
-    }
-  }, [history, data]);
-
-  useEffect(() => {
     if (!isLoading && data) {
       setFlatMap(data);
     }
   }, [data, isLoading, setFlatMap]);
 
   const handleOnOpenTopicClick = (node: ThreadNodeType) => {
-    history.push('/topics/' + node.title.replaceAll(' ', '-'));
     setLoadingNode(node);
     setOpenThread(node.id);
     window.scrollTo(0, 0);
@@ -121,7 +100,7 @@ function TopicsPage(props: IProps) {
 
   return (
     <div className={classes.root}>
-      <ScrollSpyContext.Provider value={NewPageContextFactory.build()}>
+      <ScrollSpyContext.Provider value={ScrollSpyContextFactory.build()}>
         <Box p={4} flexGrow={1}>
           <div className={clsx(classes.contentTop, { [classes.contentTopSearchBar]: searchBar })}>
             <HideOnScroll>

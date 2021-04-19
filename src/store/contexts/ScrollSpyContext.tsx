@@ -17,7 +17,7 @@ export const ScrollSpyContext = createContext<ScrollSpyContextType>({
   pauseSpy$: new Subject<boolean>(),
 });
 
-export class NewPageContextFactory {
+export class ScrollSpyContextFactory {
   static build(): ScrollSpyContextType {
     const spy = SubjectUtil.subjectObs<string>();
     const pauseSpy$ = new Subject<boolean>();
