@@ -31,13 +31,13 @@ import { useTranslate } from '../../hooks/hooks';
 import { RootState } from '../../store/store';
 import { connect, ConnectedProps } from 'react-redux';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
-  defaultValue?: string;
-  handleOnCancelClick: () => void;
-  handleOnSendClick: (markdown: string, isPublic: boolean) => void;
-  isLoading?: boolean;
-}
+type Props = ConnectedProps<typeof connector> &
+  WithStyles<typeof styles> & {
+    defaultValue?: string;
+    handleOnCancelClick: () => void;
+    handleOnSendClick: (markdown: string, isPublic: boolean) => void;
+    isLoading?: boolean;
+  };
 
 const styles = (theme: Theme) => {
   const fadedColor = fade(theme.palette.secondary.light, 0.3);
@@ -126,7 +126,7 @@ function useAuditedMarkdownStream(
   return markdownStream?.subject;
 }
 
-function MarkdownEditor(props: IProps) {
+function MarkdownEditor(props: Props) {
   const { classes, defaultValue, handleOnCancelClick, handleOnSendClick, isLoading, token } = props;
   const [markdown, setMarkdown] = React.useState(defaultValue ? defaultValue : '');
   const [preview, setPreview] = React.useState(true);

@@ -10,14 +10,14 @@ import { RootState } from '../../../store/store';
 import { connect, ConnectedProps } from 'react-redux';
 import { ThreadUtil } from '../../../utils/thread.util';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
-  loadingNode?: ThreadNodeType;
-}
+type Props = ConnectedProps<typeof connector> &
+  WithStyles<typeof styles> & {
+    loadingNode?: ThreadNodeType;
+  };
 
 const styles = () => createStyles({});
 
-function LoadingScreen(props: IProps) {
+function LoadingScreen(props: Props) {
   const { loadingNode, token, orderByDate } = props;
 
   if (loadingNode) {

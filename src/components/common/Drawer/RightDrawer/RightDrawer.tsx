@@ -20,9 +20,7 @@ import { useTranslate } from '../../../../hooks/hooks';
 import SortIcon from '@material-ui/icons/Sort';
 import CustomizedTreeView from './CustomizedTreeView/CustomizedTreeView';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,7 +59,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function RightDrawer(props: IProps) {
+function RightDrawer(props: Props) {
   const {
     classes,
     expandedRightDrawer,

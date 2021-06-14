@@ -24,9 +24,7 @@ import Login from './Login/Login';
 import { useTranslate } from '../../../../hooks/hooks';
 import { useTranslation } from 'react-i18next';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -78,7 +76,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function NavigationDrawer(props: IProps) {
+function NavigationDrawer(props: Props) {
   const {
     classes,
     expandedNavigationDrawer,

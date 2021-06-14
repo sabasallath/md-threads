@@ -17,9 +17,9 @@ import { useTranslate } from '../hooks/hooks';
 import cloneDeep from 'lodash/cloneDeep';
 import { ScrollSpyContext, ScrollSpyContextFactory } from '../store/contexts/ScrollSpyContext';
 
-interface HideOnScrollProps {
+type HideOnScrollProps = {
   children: React.ReactElement;
-}
+};
 
 const HideOnScroll: React.FunctionComponent<HideOnScrollProps> = (props: HideOnScrollProps) => {
   const { children } = props;
@@ -32,9 +32,7 @@ const HideOnScroll: React.FunctionComponent<HideOnScrollProps> = (props: HideOnS
   );
 };
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,7 +52,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function TopicsPage(props: IProps) {
+function TopicsPage(props: Props) {
   const {
     classes,
     currentThread,
@@ -142,5 +140,4 @@ const actionCreators = {
 };
 
 const connector = connect(mapStateToProps, actionCreators);
-
 export default connector(withStyles(styles)(TopicsPage));

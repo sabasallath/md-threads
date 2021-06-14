@@ -14,9 +14,7 @@ import { userActions } from '../../../../../store/features/user/user.slice';
 import UserUtil from '../../../../../utils/user.util';
 import { useTranslate } from '../../../../../hooks/hooks';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,7 +26,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function Login(props: IProps) {
+function Login(props: Props) {
   const { classes, setUser, userName, setToken, setLoggingLoading } = props;
   const translate = useTranslate();
   const { data, isLoading } = useLogin(userName);

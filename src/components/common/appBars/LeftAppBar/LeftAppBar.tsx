@@ -7,7 +7,7 @@ import AppButton from '../../brand/AppButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 
-type IProps = WithStyles<typeof styles>;
+type Props = WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,9 +26,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function LeftAppBar(props: IProps) {
-  const { classes } = props;
-
+function LeftAppBar({ classes }: Props) {
   return (
     <AppBar position="relative" className={classes.appBar}>
       <Toolbar className={classes.toolBar} variant="regular">

@@ -15,10 +15,11 @@ import { RootState } from '../../store/store';
 import { useTopicContext } from '../../store/contexts/Topic.context';
 import clsx from 'clsx';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
-  node: ThreadNodeType;
-}
+type Props = ConnectedProps<typeof connector> &
+  WithStyles<typeof styles> & {
+    node: ThreadNodeType;
+  };
+
 const styles = (theme: Theme) =>
   createStyles({
     previousMessage: {
@@ -33,7 +34,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
+function ReplyDialog({ classes, node, flatMap, user, token }: Props) {
   const { handleClose } = useDialogBaseContext();
   const { rootNodeId } = useTopicContext();
   const { title, date, isPublic, markdown, author } = node;

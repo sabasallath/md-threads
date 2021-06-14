@@ -15,9 +15,7 @@ import SearchBar from './components/common/appBars/RightAppBar/SearchBar';
 import TopicsPage from './pages/Topics.page';
 import { useTranslate } from './hooks/hooks';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,7 +48,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function App(props: IProps) {
+function App(props: Props) {
   const { classes, openedNavigationDrawer, expandedNavigationDrawer, userName, token } = props;
   const translate = useTranslate();
 

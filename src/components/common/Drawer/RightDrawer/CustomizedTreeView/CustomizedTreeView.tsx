@@ -1,5 +1,12 @@
 import React, { useEffect } from 'react';
-import { createStyles, fade, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
+import {
+  createStyles,
+  fade,
+  makeStyles,
+  Theme,
+  WithStyles,
+  withStyles,
+} from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem, { TreeItemProps } from '@material-ui/lab/TreeItem';
 import Collapse from '@material-ui/core/Collapse';
@@ -24,9 +31,7 @@ import SmsIcon from '@material-ui/icons/Sms';
 import { useScrollToNode, useTranslate } from '../../../../../hooks/hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-type IProps = Props;
+type Props = ConnectedProps<typeof connector>;
 
 function TransitionComponent(props: TransitionProps) {
   const style = useSpring({
@@ -99,7 +104,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-function CustomizedTreeView(props: IProps) {
+function CustomizedTreeView(props: Props) {
   const classes = useStyles();
   const {
     expandedRightDrawer,

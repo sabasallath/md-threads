@@ -6,7 +6,7 @@ import FullHeight from '../components/common/helpers/FullHeight';
 import Logo from '../components/common/brand/AppLogo';
 import Typography from '@material-ui/core/Typography';
 
-type IProps = WithStyles<typeof styles>;
+type Props = WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -27,7 +27,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function HomePage({ classes }: IProps) {
+function HomePage({ classes }: Props) {
   return (
     <Fade in {...{ timeout: 1200 }}>
       <FullHeight center={true} adjustCenterWithAppBar={true} scale={true}>

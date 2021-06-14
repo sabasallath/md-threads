@@ -15,9 +15,7 @@ import { ThreadUtil } from '../../../../utils/thread.util';
 import { ThreadNodeType } from '../../../../types/thread.type';
 import { getYear, parseISO } from 'date-fns';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 export interface SearchItem {
   group: string;
@@ -73,7 +71,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function SearchBar(props: IProps) {
+function SearchBar(props: Props) {
   const { classes, searchBar, flatMap, token, currentThread } = props;
   const scrollToNode = useScrollToNode();
 
@@ -193,5 +191,4 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const connector = connect(mapStateToProps);
-
 export default connector(withStyles(styles)(SearchBar));

@@ -37,8 +37,8 @@ interface ThreadNodeTypeWithLevel {
   loading?: boolean;
   node: ThreadNodeType;
 }
-type PropsFromRedux = ConnectedProps<typeof connector>;
-interface IProps extends PropsFromRedux, ThreadNodeTypeWithLevel {}
+
+type Props = ConnectedProps<typeof connector> & ThreadNodeTypeWithLevel;
 
 const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
   root: {
@@ -65,7 +65,7 @@ const useStyles = makeStyles<Theme, ThreadNodeTypeWithLevel>((theme) => ({
   },
 }));
 
-const MarkdownNodeToConnect: React.FunctionComponent<IProps> = (props: IProps) => {
+const MarkdownNodeToConnect: React.FunctionComponent<Props> = (props: Props) => {
   const classes = useStyles(props);
   const { loading, user, level, node } = props;
   const { title, descendant, date, isPublic, markdown, author, isAbstract, isPlaceHolder } = node;
