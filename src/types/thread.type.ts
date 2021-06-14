@@ -25,3 +25,9 @@ export interface FlatThreadNodeType extends ThreadNodeBase {
 }
 
 export type ThreadFlatMap = Record<string, FlatThreadNodeType>;
+
+export type ThreadViews = {
+  nested: ThreadType;
+  flatMap: ThreadFlatMap;
+  flatten: ThreadType;
+};

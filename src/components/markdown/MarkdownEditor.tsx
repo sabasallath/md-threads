@@ -27,9 +27,9 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Typography from '@material-ui/core/Typography';
 import Constant from '../../config/constant';
 import clsx from 'clsx';
-import { useTranslate } from '../../hooks/hooks';
 import { RootState } from '../../store/store';
 import { connect, ConnectedProps } from 'react-redux';
+import { useTranslate } from '../../hooks/useTranslate';
 
 type Props = ConnectedProps<typeof connector> &
   WithStyles<typeof styles> & {

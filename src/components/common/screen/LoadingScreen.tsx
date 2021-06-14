@@ -5,15 +5,11 @@ import { createStyles, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { RandomUtil } from '../../../utils/random.util';
 import Topic from '../../Topic/Topic';
-import { ThreadNodeType } from '../../../types/thread.type';
 import { RootState } from '../../../store/store';
 import { connect, ConnectedProps } from 'react-redux';
 import { ThreadUtil } from '../../../utils/thread.util';
 
-type Props = ConnectedProps<typeof connector> &
-  WithStyles<typeof styles> & {
-    loadingNode?: ThreadNodeType;
-  };
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = () => createStyles({});
 
@@ -58,8 +54,8 @@ function LoadingScreen(props: Props) {
 const mapStateToProps = (state: RootState) => ({
   token: state.user.token,
   orderByDate: state.ui.orderByDate,
+  loadingNode: state.thread.loadingNode,
 });
 
 const connector = connect(mapStateToProps);
-
 export default connector(withStyles(styles)(LoadingScreen));

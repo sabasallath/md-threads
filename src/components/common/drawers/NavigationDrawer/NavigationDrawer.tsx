@@ -18,11 +18,11 @@ import Constant from '../../../../config/constant';
 import { uiActions } from '../../../../store/features/ui/ui.slice';
 import { RootState } from '../../../../store/store';
 import FlagSelection from './FlagSelection/FlagSelection';
-import LeftAppBar from '../../appBars/LeftAppBar/LeftAppBar';
+import LeftAppBar from '../../app-bars/LeftAppBar/LeftAppBar';
 import { userActions } from '../../../../store/features/user/user.slice';
 import Login from './Login/Login';
-import { useTranslate } from '../../../../hooks/hooks';
 import { useTranslation } from 'react-i18next';
+import { useTranslate } from '../../../../hooks/useTranslate';
 
 type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 

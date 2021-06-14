@@ -4,16 +4,16 @@ import clsx from 'clsx';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import NavigationDrawer from './components/common/Drawer/NavigationDrawer/NavigationDrawer';
+import NavigationDrawer from './components/common/drawers/NavigationDrawer/NavigationDrawer';
 import Constant from './config/constant';
 import { href } from './config/path';
 import HomePage from './pages/Home.page';
 import NotFoundPage from './pages/NotFound.page';
 import { RootState } from './store/store';
-import RightAppBar from './components/common/appBars/RightAppBar/RightAppBar';
-import SearchBar from './components/common/appBars/RightAppBar/SearchBar';
+import RightAppBar from './components/common/app-bars/RightAppBar/RightAppBar';
+import SearchBar from './components/common/app-bars/RightAppBar/SearchBar';
 import TopicsPage from './pages/Topics.page';
-import { useTranslate } from './hooks/hooks';
+import { useTranslate } from './hooks/useTranslate';
 
 type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 

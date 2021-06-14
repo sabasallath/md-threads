@@ -1,32 +1,42 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { ThreadFlatMap, ThreadType } from '../../../types/thread.type';
-import { ThreadUtil } from '../../../utils/thread.util';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ThreadNodeType } from '../../../types/thread.type';
+import { RootState } from '../../store';
 
 export interface ThreadSliceType {
   currentThread: string | null;
-  flatMap: ThreadFlatMap | null;
-  flattenThread: ThreadType | null;
+  loadingNode?: ThreadNodeType;
 }
 
 const initialState: ThreadSliceType = {
   currentThread: null,
-  flatMap: null,
-  flattenThread: null,
+  loadingNode: undefined,
 };
 
 const threadSlice = createSlice({
   name: 'thread',
   initialState,
   reducers: {
-    setOpenThread(state, action) {
-      state.currentThread = action.payload;
-    },
-    setFlatMap(state, action) {
-      state.flatMap = ThreadUtil.flattenAndGroupById(action.payload);
-      state.flattenThread = ThreadUtil.rebuildThreadFromFlatMap(action.payload, state.flatMap);
+    setOpenThread(state, { payload }: PayloadAction<ThreadNodeType | undefined>) {
+      if (payload) {
+        state.currentThread = payload.id;
+      } else {
+        state.currentThread = null;
+      }
+      state.loadingNode = payload;
     },
   },
 });
+
+const getCurrentThread = (state: RootState) => state.thread.currentThread;
+const getToken = (state: RootState) => state.user.token;
+
+export const getThreadsKeys = createSelector(
+  [getCurrentThread, getToken],
+  (currentThread, token) => ({
+    currentThread,
+    token,
+  })
+);
 
 export const threadActions = threadSlice.actions;
 export default threadSlice.reducer;

@@ -12,7 +12,7 @@ import { RootState } from '../../../../../store/store';
 import { uiActions } from '../../../../../store/features/ui/ui.slice';
 import { userActions } from '../../../../../store/features/user/user.slice';
 import UserUtil from '../../../../../utils/user.util';
-import { useTranslate } from '../../../../../hooks/hooks';
+import { useTranslate } from '../../../../../hooks/useTranslate';
 
 type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 

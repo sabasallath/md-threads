@@ -16,9 +16,9 @@ import { RootState } from '../../../../store/store';
 import SearchIcon from '@material-ui/icons/Search';
 import { FormGroup, IconButton, Switch } from '@material-ui/core';
 import { uiActions } from '../../../../store/features/ui/ui.slice';
-import { useTranslate } from '../../../../hooks/hooks';
 import SortIcon from '@material-ui/icons/Sort';
 import CustomizedTreeView from './CustomizedTreeView/CustomizedTreeView';
+import { useTranslate } from '../../../../hooks/useTranslate';
 
 type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 

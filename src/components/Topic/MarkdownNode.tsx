@@ -26,11 +26,11 @@ import { RootState } from '../../store/store';
 import { connect, ConnectedProps } from 'react-redux';
 import LockIcon from '@material-ui/icons/Lock';
 import UserUtil from '../../utils/user.util';
-import { useTranslate } from '../../hooks/hooks';
 import { ThreadUtil } from '../../utils/thread.util';
 import { Waypoint } from 'react-waypoint';
 import { Element } from 'react-scroll';
-import { useScrollSpy } from '../../store/contexts/ScrollSpyContext';
+import { useScrollSpy } from '../../store/contexts/ScrollSpy.context';
+import { useTranslate } from '../../hooks/useTranslate';
 
 interface ThreadNodeTypeWithLevel {
   level: number;

@@ -1,12 +1,6 @@
-import { useTranslation } from 'react-i18next';
 import { scroller } from 'react-scroll';
 import Constant from '../config/constant';
 import store from '../store/store';
-
-export function useTranslate(): (k: string) => string {
-  const { t, ready } = useTranslation();
-  return (k: string) => (ready ? t(k) : k);
-}
 
 export function useScrollToNode(): (nodeId: string) => void {
   return (nodeId: string) => {

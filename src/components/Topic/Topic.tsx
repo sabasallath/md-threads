@@ -20,10 +20,10 @@ function Topic({ thread, handleOnOpenTopicClick, loading }: Props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [node, setNode] = useState<ThreadNodeType>(ThreadUtil.emptyNode());
+  const [replyNode, setReplyNode] = useState<ThreadNodeType>(ThreadUtil.emptyNode());
 
   const handleOnReplyClick = (node: ThreadNodeType) => {
-    setNode(node);
+    setReplyNode(node);
     setOpen(true);
   };
 
@@ -38,7 +38,7 @@ function Topic({ thread, handleOnOpenTopicClick, loading }: Props) {
       >
         <MarkdownNode loading={loading !== undefined && loading} level={0} node={thread.root} />
         <DialogBase fullWidth open={open} handleClose={handleClose} handleOpen={handleOpen}>
-          <ReplyDialog node={node} />
+          <ReplyDialog node={replyNode} />
         </DialogBase>
       </TopicContext.Provider>
       <CouldNotSendReplyErrorDisplay />
