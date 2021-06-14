@@ -9,9 +9,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
 import { SnackbarCloseReason } from '@material-ui/core/Snackbar/Snackbar';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-interface IProps extends PropsFromRedux, WithStyles<typeof styles> {}
-
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 const styles = (theme: Theme) =>
   createStyles({
     alert: {
@@ -28,7 +26,7 @@ function CouldNotSendReplyErrorDisplay({
   classes,
   couldNotSendReplyError,
   setCouldNotSendReplyError,
-}: IProps) {
+}: Props) {
   const [open, setOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState(null);
 

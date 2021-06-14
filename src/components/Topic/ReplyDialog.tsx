@@ -8,17 +8,19 @@ import MarkdownEditor from '../markdown/MarkdownEditor';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { DateUtil } from '../../utils/date.util';
-import { useTranslate } from '../../hooks/hooks';
 import { useReply } from '../../api/api';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../../store/store';
 import { useTopicContext } from '../../store/contexts/Topic.context';
 import clsx from 'clsx';
+import { useTranslate } from '../../hooks/useTranslate';
+import { useFlatMap } from '../../hooks/useFlatMap';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-interface IProps extends PropsFromRedux, WithStyles<typeof styles> {
-  node: ThreadNodeType;
-}
+type Props = ConnectedProps<typeof connector> &
+  WithStyles<typeof styles> & {
+    node: ThreadNodeType;
+  };
+
 const styles = (theme: Theme) =>
   createStyles({
     previousMessage: {
@@ -33,7 +35,8 @@ const styles = (theme: Theme) =>
     },
   });
 
-function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
+function ReplyDialog({ classes, node, user, token }: Props) {
+  const flatMap = useFlatMap();
   const { handleClose } = useDialogBaseContext();
   const { rootNodeId } = useTopicContext();
   const { title, date, isPublic, markdown, author } = node;
@@ -100,7 +103,6 @@ function ReplyDialog({ classes, node, flatMap, user, token }: IProps) {
 
 const mapStateToProps = (state: RootState) => ({
   user: state.user,
-  flatMap: state.thread.flatMap,
   token: state.user.token,
 });
 

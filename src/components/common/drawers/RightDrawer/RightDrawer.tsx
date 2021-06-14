@@ -16,13 +16,11 @@ import { RootState } from '../../../../store/store';
 import SearchIcon from '@material-ui/icons/Search';
 import { FormGroup, IconButton, Switch } from '@material-ui/core';
 import { uiActions } from '../../../../store/features/ui/ui.slice';
-import { useTranslate } from '../../../../hooks/hooks';
 import SortIcon from '@material-ui/icons/Sort';
 import CustomizedTreeView from './CustomizedTreeView/CustomizedTreeView';
+import { useTranslate } from '../../../../hooks/useTranslate';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,7 +59,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function RightDrawer(props: IProps) {
+function RightDrawer(props: Props) {
   const {
     classes,
     expandedRightDrawer,

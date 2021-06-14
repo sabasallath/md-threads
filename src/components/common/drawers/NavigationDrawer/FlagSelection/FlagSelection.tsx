@@ -6,7 +6,7 @@ import { IconButton } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import Constant from '../../../../../config/constant';
 
-type IProps = WithStyles<typeof styles>;
+type Props = WithStyles<typeof styles>;
 
 const styles = () =>
   createStyles({
@@ -15,8 +15,7 @@ const styles = () =>
     },
   });
 
-function FlagSelection(props: IProps) {
-  const { classes } = props;
+function FlagSelection({ classes }: Props) {
   const { i18n, ready } = useTranslation();
 
   const handleClick = () => {

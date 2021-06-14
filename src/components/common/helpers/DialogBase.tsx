@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import DialogBaseType from '../../../types/dialogBase.type';
 import { SlideProps } from '@material-ui/core/Slide/Slide';
 
-interface IProps extends WithStyles<typeof styles>, DialogBaseType {}
+type Props = WithStyles<typeof styles> & DialogBaseType;
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<SlideProps> },
@@ -26,7 +26,7 @@ const styles = () =>
     },
   });
 
-function DialogBase(props: IProps) {
+function DialogBase(props: Props) {
   const {
     classes,
     open,

@@ -1,11 +1,10 @@
 import axios from 'axios';
 import store from '../store/store';
+import { href } from './path';
 
 const instance = () => {
-  const PUBLIC_URL = ((window as unknown) as Record<string, string>).BASE_HREF || '/';
-
   const axiosAuthInstance = axios.create({
-    baseURL: PUBLIC_URL,
+    baseURL: href(),
   });
 
   axiosAuthInstance.interceptors.request.use(
@@ -25,5 +24,4 @@ const instance = () => {
 };
 
 const axiosApiInstance = instance();
-
 export default axiosApiInstance;

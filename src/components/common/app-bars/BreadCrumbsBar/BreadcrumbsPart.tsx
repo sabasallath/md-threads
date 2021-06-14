@@ -6,12 +6,12 @@ import { Typography } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 
-interface IProps extends WithStyles<typeof styles> {
+type Props = WithStyles<typeof styles> & {
   pathPart: string;
   isActive: boolean;
   index: number;
   handlePathPartClick: (index: number) => void;
-}
+};
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,7 +28,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function BreadcrumbsPart(props: IProps) {
+function BreadcrumbsPart(props: Props) {
   const { classes, isActive, pathPart, index, handlePathPartClick } = props;
   const isRoot = index === 0;
 

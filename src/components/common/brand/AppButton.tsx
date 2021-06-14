@@ -6,9 +6,8 @@ import React from 'react';
 import { uiActions } from '../../../store/features/ui/ui.slice';
 import { RootState } from '../../../store/store';
 import AppLogo from './AppLogo';
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -17,9 +16,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function AppButton(props: IProps) {
-  const { classes, expandedNavigationDrawer, setExpandedNavigationDrawer } = props;
-
+function AppButton({ classes, expandedNavigationDrawer, setExpandedNavigationDrawer }: Props) {
   return (
     <Tooltip title={expandedNavigationDrawer ? 'Shrink' : 'Expand'}>
       <IconButton
@@ -43,5 +40,4 @@ const actionCreators = {
 };
 
 const connector = connect(mapStateToProps, actionCreators);
-
 export default connector(withStyles(styles)(AppButton));

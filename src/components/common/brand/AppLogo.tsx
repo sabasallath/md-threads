@@ -3,10 +3,10 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-interface IProps extends WithStyles<typeof styles> {
+type Props = WithStyles<typeof styles> & {
   animate?: boolean;
   icon?: boolean;
-}
+};
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -23,7 +23,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-const AppLogo = ({ classes, animate, icon }: IProps) => {
+const AppLogo = ({ classes, animate, icon }: Props) => {
   return (
     <svg
       className={clsx(classes.root, { [classes.icon]: icon })}

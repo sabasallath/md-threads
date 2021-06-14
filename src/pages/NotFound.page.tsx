@@ -4,7 +4,8 @@ import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import FullHeight from '../components/common/helpers/FullHeight';
 import VpnLockIcon from '@material-ui/icons/VpnLock';
 import { Typography } from '@material-ui/core';
-type IProps = WithStyles<typeof styles>;
+
+type Props = WithStyles<typeof styles>;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -27,7 +28,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function NotFoundPage(props: IProps) {
+function NotFoundPage(props: Props) {
   const { classes } = props;
   const color = 'primary';
   const vpnLockIcon = <VpnLockIcon style={{ transform: 'scale(0.9)' }} fontSize={'inherit'} />;

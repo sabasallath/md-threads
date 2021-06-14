@@ -10,14 +10,13 @@ import { connect, ConnectedProps } from 'react-redux';
 import clsx from 'clsx';
 import { RootState } from '../../../../store/store';
 import Constant from '../../../../config/constant';
-import { useScrollToNode } from '../../../../hooks/hooks';
 import { ThreadUtil } from '../../../../utils/thread.util';
 import { ThreadNodeType } from '../../../../types/thread.type';
 import { getYear, parseISO } from 'date-fns';
+import { useScrollToNode } from '../../../../hooks/useScrollToNode';
+import { useFlatMap } from '../../../../hooks/useFlatMap';
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-interface IProps extends Props, WithStyles<typeof styles> {}
+type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
 export interface SearchItem {
   group: string;
@@ -73,8 +72,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-function SearchBar(props: IProps) {
-  const { classes, searchBar, flatMap, token, currentThread } = props;
+function SearchBar(props: Props) {
+  const { classes, searchBar, token, currentThread } = props;
+  const flatMap = useFlatMap();
   const scrollToNode = useScrollToNode();
 
   const groupByIcon = {
@@ -187,11 +187,9 @@ function SearchBar(props: IProps) {
 
 const mapStateToProps = (state: RootState) => ({
   searchBar: state.ui.searchBar,
-  flatMap: state.thread.flatMap,
   token: state.user.token,
   currentThread: state.thread.currentThread,
 });
 
 const connector = connect(mapStateToProps);
-
 export default connector(withStyles(styles)(SearchBar));

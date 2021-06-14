@@ -3,10 +3,10 @@ import { withStyles, createStyles, WithStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 
-interface IProps extends WithStyles<typeof styles> {
+type Props = WithStyles<typeof styles> & {
   children?: React.ReactChild | React.ReactChild[];
   center?: boolean;
-}
+};
 
 const styles = () =>
   createStyles({
@@ -25,7 +25,7 @@ const styles = () =>
     },
   });
 
-function RightAppBar({ classes, children, center }: IProps) {
+function RightAppBar({ classes, children, center }: Props) {
   return (
     <AppBar position="sticky" className={classes.appBar}>
       <Toolbar className={clsx(classes.toolBar)}>

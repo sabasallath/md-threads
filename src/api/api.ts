@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult, useQuery, UseQueryResult } from 'react-query';
 import MockApi from './mockApi';
-import { ThreadType } from '../types/thread.type';
+import { ThreadType, ThreadViews } from '../types/thread.type';
 import { TokenType } from '../types/user.type';
 import { PayloadType } from '../types/payload.type';
 import queryClient from '../config/queryClient';
@@ -9,13 +9,20 @@ import cloneDeep from 'lodash/cloneDeep';
 import store from '../store/store';
 import { uiActions } from '../store/features/ui/ui.slice';
 
+const transformThread = (data: ThreadType): ThreadViews => {
+  const flatMap = ThreadUtil.flattenAndGroupById(data);
+  const flatten = ThreadUtil.rebuildThreadFromFlatMap(data, flatMap);
+  return { nested: data, flatMap, flatten };
+};
+
 export function useThreads(
   key: string | null,
   token: TokenType
-): UseQueryResult<ThreadType, Error> {
-  return useQuery<ThreadType, Error>(
+): UseQueryResult<ThreadViews, Error> {
+  return useQuery<ThreadType, Error, ThreadViews>(
     ['threads', key, token?.access_token ? token.access_token : null],
-    () => MockApi.threads(key)
+    () => MockApi.threads(key),
+    { select: transformThread }
   );
 }
 

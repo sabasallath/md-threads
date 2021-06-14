@@ -5,12 +5,12 @@ import clsx from 'clsx';
 import { useMediaQuery } from '@material-ui/core';
 import Constant from '../../../config/constant';
 
-interface IProps extends WithStyles<typeof styles> {
+type Props = WithStyles<typeof styles> & {
   children?: React.ReactChild | React.ReactChild[];
   center?: boolean;
   adjustCenterWithAppBar?: boolean;
   scale?: boolean;
-}
+};
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,7 +46,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function FullHeight(props: IProps) {
+function FullHeight(props: Props) {
   const { classes } = props;
   const isMatchMedium = useMediaQuery<Theme>(`(max-height:${600}px)`);
   const isMatchSmall = useMediaQuery<Theme>(`(max-height:${300}px)`);

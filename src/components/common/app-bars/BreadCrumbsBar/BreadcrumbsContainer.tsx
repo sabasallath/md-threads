@@ -5,10 +5,10 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import BreadcrumbsPart from './BreadcrumbsPart';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 
-interface IProps extends WithStyles<typeof styles> {
+type Props = WithStyles<typeof styles> & {
   path: string[];
   handlePathPartClick: (index: number) => void;
-}
+};
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -18,7 +18,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-function BreadcrumbsContainer(props: IProps) {
+function BreadcrumbsContainer(props: Props) {
   const { path, classes, handlePathPartClick } = props;
 
   return (

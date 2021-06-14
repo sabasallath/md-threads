@@ -13,20 +13,19 @@ import { connect, ConnectedProps } from 'react-redux';
 import clsx from 'clsx';
 import union from 'lodash/union';
 import difference from 'lodash/difference';
-import { useScrollSpy } from '../../../../../store/contexts/ScrollSpyContext';
+import { useScrollSpy } from '../../../../../store/contexts/ScrollSpy.context';
 import { RootState } from '../../../../../store/store';
 import Constant from '../../../../../config/constant';
-import { ThreadNodeType, ThreadType } from '../../../../../types/thread.type';
+import { ThreadNodeType } from '../../../../../types/thread.type';
 import { ThreadUtil } from '../../../../../utils/thread.util';
 import cloneDeep from 'lodash/cloneDeep';
-import queryClient from '../../../../../config/queryClient';
 import SmsIcon from '@material-ui/icons/Sms';
-import { useScrollToNode, useTranslate } from '../../../../../hooks/hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux;
-type IProps = Props;
+import { useTranslate } from '../../../../../hooks/useTranslate';
+import { useScrollToNode } from '../../../../../hooks/useScrollToNode';
+import { useThreadsWrapper } from '../../../../../hooks/useThreadsWrapper';
+import { useFlatMap } from '../../../../../hooks/useFlatMap';
+type Props = ConnectedProps<typeof connector>;
 
 function TransitionComponent(props: TransitionProps) {
   const style = useSpring({
@@ -56,7 +55,7 @@ const StyledTreeItem = withStyles((theme: Theme) =>
   })
 )((props: TreeItemProps) => <TreeItem {...props} TransitionComponent={TransitionComponent} />);
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       flexGrow: 1,
@@ -99,27 +98,17 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-function CustomizedTreeView(props: IProps) {
+function CustomizedTreeView(props: Props) {
   const classes = useStyles();
-  const {
-    expandedRightDrawer,
-    flattenThread,
-    flatMap,
-    currentThread,
-    token,
-    orderByDate,
-    searchBar,
-  } = props;
+  const { expandedRightDrawer, orderByDate, searchBar } = props;
   const [expanded, setExpanded] = React.useState<string[]>([]);
   const [selected, setSelected] = React.useState<string>('');
   const { spy, auditedSpy$, pauseSpy$ } = useScrollSpy();
   const scrollToNode = useScrollToNode();
-  const queryKey = ['threads', currentThread, token?.access_token ? token.access_token : null];
-  const thread = queryClient.getQueryData(queryKey) as ThreadType | undefined;
-  const isAbstract = thread && thread?.root?.isAbstract;
+  const { data, isLoading, isError } = useThreadsWrapper();
+  const isAbstract = data && data.nested?.root?.isAbstract;
   const translate = useTranslate();
-  const isLoading =
-    !flatMap || (orderByDate && !flattenThread && !flattenThread) || (!orderByDate && !thread);
+  const flatMap = useFlatMap();
 
   const scrollTrigger = (nodeId: string | undefined) => {
     if (nodeId && flatMap?.[nodeId]?.fromRootPathToNodeIncluded) {
@@ -209,18 +198,18 @@ function CustomizedTreeView(props: IProps) {
       defaultEndIcon={isAbstract ? <SubjectIcon color="action" /> : <SmsIcon color="action" />}
       multiSelect={false}
     >
-      {!isLoading ? (
+      {!isLoading && !isError && data ? (
         <>
           <div className={classes.home}>
             {isAbstract ? <MenuBookIcon color="action" /> : <SubjectIcon color="action" />}
             <Typography className={classes.homeGroup}>
-              {isAbstract ? translate('Topics') : thread?.root.title}
+              {isAbstract ? translate('Topics') : data.nested?.root.title}
             </Typography>
           </div>
           <div className={classes.tree}>
-            {orderByDate && flattenThread
-              ? ThreadUtil.sortByDate(cloneDeep(flattenThread.root.descendant)).map(genNode)
-              : thread && ThreadUtil.sortByDate(thread.root.descendant).map(genNode)}
+            {orderByDate && data.flatten
+              ? ThreadUtil.sortByDate(cloneDeep(data.flatten.root.descendant)).map(genNode)
+              : data && ThreadUtil.sortByDate(data.nested.root.descendant).map(genNode)}
           </div>
         </>
       ) : (
@@ -233,10 +222,6 @@ function CustomizedTreeView(props: IProps) {
 const mapStateToProps = (state: RootState) => ({
   expandedRightDrawer: state.ui.expandedRightDrawer,
   searchBar: state.ui.searchBar,
-  flattenThread: state.thread.flattenThread,
-  flatMap: state.thread.flatMap,
-  currentThread: state.thread.currentThread,
-  token: state.user.token,
   orderByDate: state.ui.orderByDate,
 });
 
