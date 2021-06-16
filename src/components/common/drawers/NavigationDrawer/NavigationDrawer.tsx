@@ -175,7 +175,7 @@ function NavigationDrawer(props: Props) {
               <ListItemIcon>
                 <InvertColorsIcon />
               </ListItemIcon>
-              <ListItemText primary={'switch theme'} />
+              <ListItemText primary={translate('Switch theme')} />
             </ListItem>
           </List>
         </Collapse>
