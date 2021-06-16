@@ -17,12 +17,14 @@ import { Link, useLocation } from 'react-router-dom';
 import Constant from '../../../../config/constant';
 import { uiActions } from '../../../../store/features/ui/ui.slice';
 import { RootState } from '../../../../store/store';
-import FlagSelection from './FlagSelection/FlagSelection';
 import LeftAppBar from '../../app-bars/LeftAppBar/LeftAppBar';
 import { userActions } from '../../../../store/features/user/user.slice';
 import Login from './Login/Login';
 import { useTranslation } from 'react-i18next';
 import { useTranslate } from '../../../../hooks/useTranslate';
+import InvertColorsIcon from '@material-ui/icons/InvertColors';
+import FlagIcon from './FlagIcon/FlagIcon';
+import NotReadyFlagIcon from '@material-ui/icons/Flag';
 
 type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
@@ -74,6 +76,11 @@ const styles = (theme: Theme) =>
     nested: {
       paddingLeft: theme.spacing(4),
     },
+    flagIcon: {
+      width: '30px',
+      display: 'flex',
+      fontSize: '1.2rem',
+    },
   });
 
 function NavigationDrawer(props: Props) {
@@ -82,8 +89,9 @@ function NavigationDrawer(props: Props) {
     expandedNavigationDrawer,
     setExpandedNavigationDrawer,
     openedNavigationDrawer,
+    switchTheme,
   } = props;
-  const { i18n } = useTranslation();
+  const { i18n, ready } = useTranslation();
   const translate = useTranslate();
   const { pathname } = useLocation();
   const [openSettings, setOpenSettings] = React.useState(false);
@@ -95,6 +103,12 @@ function NavigationDrawer(props: Props) {
     } else {
       setOpenSettings(!openSettings);
     }
+  };
+
+  const handleClickChangeLanguage = () => {
+    i18n.language === Constant.LOCAL_CODES[0]
+      ? i18n.changeLanguage(Constant.LOCAL_CODES[1])
+      : i18n.changeLanguage(Constant.LOCAL_CODES[0]);
   };
 
   const navigationItems = [
@@ -149,11 +163,19 @@ function NavigationDrawer(props: Props) {
         </ListItem>
         <Collapse in={openSettings && expandedNavigationDrawer} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem className={classes.nested}>
+            <ListItem button className={classes.nested} onClick={() => handleClickChangeLanguage()}>
               <ListItemIcon>
-                <FlagSelection />
+                <div className={classes.flagIcon}>
+                  {ready ? <FlagIcon code={i18n.language} /> : <NotReadyFlagIcon />}
+                </div>
               </ListItemIcon>
               <ListItemText primary={translate(i18n.language)} />
+            </ListItem>
+            <ListItem className={classes.nested} button onClick={() => switchTheme()}>
+              <ListItemIcon>
+                <InvertColorsIcon />
+              </ListItemIcon>
+              <ListItemText primary={'switch theme'} />
             </ListItem>
           </List>
         </Collapse>
@@ -181,6 +203,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const actionCreators = {
   setExpandedNavigationDrawer: uiActions.setExpandedNavigationDrawer,
+  switchTheme: uiActions.switchTheme,
   setUser: userActions.setUser,
 };
 

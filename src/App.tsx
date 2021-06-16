@@ -1,4 +1,4 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
+import { createStyles, Theme, ThemeProvider, WithStyles } from '@material-ui/core/styles';
 import withStyles from '@material-ui/core/styles/withStyles';
 import clsx from 'clsx';
 import React from 'react';
@@ -14,6 +14,7 @@ import RightAppBar from './components/common/app-bars/RightAppBar/RightAppBar';
 import SearchBar from './components/common/app-bars/RightAppBar/SearchBar';
 import TopicsPage from './pages/Topics.page';
 import { useTranslate } from './hooks/useTranslate';
+import { useSwitchTheme } from './hooks/useSwitchTheme';
 
 type Props = ConnectedProps<typeof connector> & WithStyles<typeof styles>;
 
@@ -51,41 +52,44 @@ const styles = (theme: Theme) =>
 function App(props: Props) {
   const { classes, openedNavigationDrawer, expandedNavigationDrawer, userName, token } = props;
   const translate = useTranslate();
+  const theme = useSwitchTheme();
 
   return (
-    <div className={classes.root}>
-      <Router basename={href()}>
-        <NavigationDrawer />
-        <main
-          className={clsx(classes.content, {
-            [classes.expandedNavigationDrawer]: expandedNavigationDrawer,
-            [classes.reducedNavigationDrawer]: !expandedNavigationDrawer,
-            [classes.contentShift]: openedNavigationDrawer,
-          })}
-        >
-          <Switch>
-            <Route
-              exact
-              path="/"
-              component={() => (
-                <RightAppBar center>
-                  {translate('Welcome').concat(
-                    userName && token?.access_token ? ` ${userName}` : ''
-                  )}
-                </RightAppBar>
-              )}
-            />
-            <Route path="/topics" component={() => <SearchBar />} />
-            <Route component={RightAppBar} />
-          </Switch>
-          <Switch>
-            <Route exact path="/" component={HomePage} />
-            <Route path="/topics" component={TopicsPage} />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </main>
-      </Router>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <Router basename={href()}>
+          <NavigationDrawer />
+          <main
+            className={clsx(classes.content, {
+              [classes.expandedNavigationDrawer]: expandedNavigationDrawer,
+              [classes.reducedNavigationDrawer]: !expandedNavigationDrawer,
+              [classes.contentShift]: openedNavigationDrawer,
+            })}
+          >
+            <Switch>
+              <Route
+                exact
+                path="/"
+                component={() => (
+                  <RightAppBar center>
+                    {translate('Welcome').concat(
+                      userName && token?.access_token ? ` ${userName}` : ''
+                    )}
+                  </RightAppBar>
+                )}
+              />
+              <Route path="/topics" component={() => <SearchBar />} />
+              <Route component={RightAppBar} />
+            </Switch>
+            <Switch>
+              <Route exact path="/" component={HomePage} />
+              <Route path="/topics" component={TopicsPage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </main>
+        </Router>
+      </div>
+    </ThemeProvider>
   );
 }
 

@@ -4,6 +4,7 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import withStyles from '@material-ui/core/styles/withStyles';
 import BreadcrumbsPart from './BreadcrumbsPart';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 type Props = WithStyles<typeof styles> & {
   path: string[];
@@ -14,7 +15,7 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       paddingLeft: theme.spacing(1),
-      backgroundColor: 'rgba(255,255,255,.75)',
+      backgroundColor: fade(theme.palette.background.default, 0.75),
     },
   });
 
