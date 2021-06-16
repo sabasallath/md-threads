@@ -24,9 +24,10 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
+      backgroundColor: theme.palette.background.default,
     },
     contentTop: {
-      zIndex: theme.zIndex.drawer - 1,
+      zIndex: 29, // todo fix zIndex
       top: 0,
       position: 'sticky',
     },

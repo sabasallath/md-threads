@@ -2,6 +2,8 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { createStyles, Theme, WithStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import { getIsDarkTheme } from '../../../store/features/ui/ui.slice';
 
 type Props = WithStyles<typeof styles> & {
   animate?: boolean;
@@ -24,6 +26,7 @@ const styles = (theme: Theme) =>
   });
 
 const AppLogo = ({ classes, animate, icon }: Props) => {
+  const isDarkTheme = useSelector(getIsDarkTheme);
   return (
     <svg
       className={clsx(classes.root, { [classes.icon]: icon })}
@@ -34,7 +37,9 @@ const AppLogo = ({ classes, animate, icon }: Props) => {
     >
       <defs>
         <filter id="f" x="0" y="0" width="200%" height="200%">
-          <feOffset result="offOut" in="SourceGraphic" dx="5" dy="10" />
+          {!isDarkTheme ? (
+            <feOffset result="offOut" in="SourceGraphic" dx="5" dy="10" />
+          ) : undefined}
           <feGaussianBlur result="blurOut" in="offOut" stdDeviation="6" />
           <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
           <feColorMatrix type="hueRotate" values="45">

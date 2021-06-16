@@ -72,8 +72,9 @@ const styles = (theme: Theme) => {
       height: '100%',
       resize: 'none',
       borderColor: fadedColor,
-      color: 'black',
+      color: theme.palette.text.primary,
       display: 'flex',
+      backgroundColor: theme.palette.background.default,
     },
     previewArea: {
       wordBreak: 'break-all',

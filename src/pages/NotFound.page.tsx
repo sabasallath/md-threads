@@ -11,6 +11,7 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       marginBottom: '1em',
+      backgroundColor: theme.palette.background.default,
     },
     message: {
       display: 'flex',
