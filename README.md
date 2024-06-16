@@ -1,8 +1,23 @@
-# Getting Started with Create React App
+# POC md-threads
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+⚠️ WARNING: All libraries in this project are deprecated. Use Node.js version 12 and Yarn to run the project. ⚠️
+
+**Overview :**
+
+This project is a Proof of Concept (POC) for testing react-query in a React application.
+
+
+## Point of interest
+
+- [MarkdownNode.tsx](src%2Fcomponents%2FTopic%2FMarkdownNode.tsx) Recursive tree node component
+- [thread.util.ts](src%2Futils%2Fthread.util.ts) Tree node manipulation functions
+- [ScrollSpy.context.tsx](src%2Fstore%2Fcontexts%2FScrollSpy.context.tsx) Rxjs scrollspy implementation
+- [CustomizedTreeView.tsx](src%2Fcomponents%2Fcommon%2Fdrawers%2FRightDrawer%2FCustomizedTreeView%2FCustomizedTreeView.tsx) Left panel tree view of the thread
+
 
 ## Available Scripts
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 In the project directory, you can run:
 
